@@ -1,4 +1,58 @@
 @import "tailwindcss";
+.auth-panel,
+.join-panel {
+  max-width: 480px;
+  margin: 50px auto;
+  padding: 28px;
+}
+.auth-buttons {
+  display: grid;
+  gap: 12px;
+  margin: 24px 0;
+}
+.auth-divider {
+  color: var(--muted);
+  margin: 20px 0;
+  font-size: 14px;
+}
+.auth-email {
+  display: block;
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  margin: 8px 0 16px;
+  font-size: 16px;
+}
+.auth-panel .info {
+  margin-top: 20px;
+}
+.join-panel .primary {
+  margin-top: 24px;
+}
+.recent-rooms {
+  padding: 24px;
+  margin-top: 28px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.recent-rooms h2 {
+  width: 100%;
+}
+.capotto-toggle {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 48px;
+}
+.capotto-toggle input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--lime);
+}
 :root {
   --bg: #101310;
   --panel: #1b201b;

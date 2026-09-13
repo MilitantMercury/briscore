@@ -1,43 +1,70 @@
 # Briscore
 
-Segnapunti condiviso per Briscolone a cinque giocatori. Next.js App Router, TypeScript e Tailwind CSS. Nessun account richiesto.
+Segnapunti condiviso per Briscolone a cinque giocatori, con Next.js App Router, TypeScript, Tailwind CSS e Supabase Auth/Database/Realtime.
 
 ## Avvio
 
-Richiede Node.js 22 o superiore.
+Node.js 22 o superiore. Creare `.env.local` da `.env.example` e inserire URL e publishable key Supabase. Nessuna service-role key è richiesta dall'app.
 
 ```sh
 npm install
 npm run dev
 ```
 
-Aprire http://localhost:3000. Per provare con altri telefoni sulla stessa rete Wi-Fi, aprire `http://IP-DEL-COMPUTER:3000` e condividere il link generato da quell'indirizzo. Il server deve restare acceso e raggiungibile. Per l'utilizzo via Internet occorre ospitare il server su un indirizzo HTTPS pubblico.
+Aprire http://localhost:3000. Per produzione: `npm run build`, poi `npm start`. Le partite sono salvate su Supabase; l'app richiede un server Next.js raggiungibile. GitHub conserva il codice, non ospita automaticamente l'app.
+
+## Account e partita
+
+- Login obbligatorio. Email magic link è disponibile; Google e Apple appaiono attivi solo quando i provider sono realmente configurati su Supabase.
+- La sessione viene mantenuta dal browser e rinnovata da Supabase. Il link di invito viene conservato anche durante il ritorno dal login.
+- Chi crea la stanza inserisce il proprio nome al primo posto ed è l'host. Il ruolo deriva dall'account Supabase, mai da un token locale.
+- L'host condivide un invito contenente ID stanza e token di invito. Ogni altro account sceglie uno dei quattro posti liberi. Uno stesso account non occupa più posti; un sesto account non può entrare.
+- Solo i membri possono leggere i dati. Il nome associato alla proposta viene ricavato dall'account, non dal testo inviato dal client.
+- Ogni partecipante propone nuove mani, modifiche ed eliminazioni. Solo l'host approva/rifiuta; le sue operazioni sono immediate.
+- Tutte le scritture sono transazionali e controllano la revisione. Un form aperto prima di un aggiornamento segnala un conflitto e richiede di controllare i dati prima di riprovare.
+- Realtime notifica le modifiche alla stanza e il client ricarica una snapshot coerente. Recupero al ritorno in primo piano/online e tentativi ogni 10 secondi solo se il canale non è collegato.
+- “Le tue partite” recupera le ultime 30 stanze dell'account anche da un altro browser. La classifica generale tra partite e la conclusione ufficiale delle sessioni restano funzionalità successive.
+- Reset rimuove le mani e rifiuta le proposte pendenti, mantenendo giocatori e appartenenze. Nuova sessione torna alla creazione; le altre stanze restano recuperabili dall'account.
+
+## Punteggi
+
+`src/lib/game.ts` contiene l'unica funzione di calcolo, pura e testabile.
+
+| Chiamata vinta   | Chiamante | Chiamato | Altri |
+| ---------------- | --------: | -------: | ----: |
+| Normale          |        +2 |       +1 |    −1 |
+| 70–79            |        +4 |       +2 |    −2 |
+| 80+              |        +6 |       +3 |    −3 |
+| Carichi, da solo |        +4 |        — |    −1 |
+
+Sconfitta: segni invertiti. Capotto: solo in vittoria, raddoppia tutti i delta, anche per Carichi. La somma è sempre zero. I risultati e la classifica sono derivati dalle mani e non vengono salvati come totali modificabili.
+
+## Database e sicurezza
+
+`src/lib/rooms.ts` chiama le RPC Supabase con il JWT dell'utente verificato dal server. Non usa file JSON, service-role key o mutex in memoria. Il database valida autonomamente ruoli, partecipanti, chiamata e capotto anche se qualcuno chiama una RPC senza passare da Next.js.
+
+Migrazioni e istruzioni: [supabase/README.md](supabase/README.md). Le vecchie partite in `.briscore-data` sono preservate sul disco e ignorate da Git, ma non vengono importate automaticamente: mancavano le identità account necessarie per attribuirle correttamente. La nuova app usa solo Supabase. localStorage conserva soltanto sessione Auth e riferimento all'ultima stanza per account.
+
+## Verifiche
 
 ```sh
 npm run lint
 npm test
 npm run typecheck
 npm run build
-npm start
 ```
 
-Con il server avviato, `npm run test:integration` verifica anche autorizzazioni host, proposte, approvazioni, conflitti e modifiche concorrenti tramite HTTP. Crea una stanza di test separata con nomi sintetici.
+Per il test end-to-end su Supabase, avviare la build su una porta separata:
 
-## Partita condivisa
+```sh
+npm run start -- --port 3100
+```
 
-- Chi crea la stanza è host. Il suo token viene conservato solo nel browser; il link condiviso non lo contiene.
-- Ogni partecipante seleziona il proprio nome e propone nuove mani, modifiche o eliminazioni. Il nome è una dichiarazione, non un'identità autenticata.
-- Solo l'host approva/rifiuta le proposte; le modifiche dirette dell'host sono immediate.
-- Punti e storico si aggiornano automaticamente ogni 1,5 secondi su tutti i dispositivi. In caso di perdita di connessione le scritture sono disabilitate e il client ritenta automaticamente.
-- Il server verifica token, revisione e regole; una modifica concorrente non sovrascrive silenziosamente un'altra. Le proposte su mani cambiate sono bloccate all'approvazione.
-- I punteggi sono sempre derivati dallo storico con `calculateHandScore`, anche dopo ripristino, modifica e cancellazione.
-- Per Carichi il risultato finale è `+4/-1` (o `-4/+1`), senza ulteriore moltiplicazione.
-- Reset svuota lo storico mantenendo stanza e giocatori. Nuova sessione crea un nuovo tavolo; il vecchio link resta consultabile. Il browser conserva il token dell'ultima stanza creata: creare una nuova stanza sostituisce il precedente accesso host locale.
+In un'altra finestra PowerShell, con Supabase CLI autenticata:
 
-## Persistenza e futuro Supabase
+```powershell
+$env:BRISCORE_ALLOW_REMOTE_TESTS = "1"
+npm run test:integration
+```
 
-L'adattatore corrente è `src/lib/rooms.ts`: salva atomicamente file JSON nella cartella `.briscore-data` (ignorata da Git), oppure nel percorso `BRISCORE_DATA_DIR`. Il server salva giocatori, data, storico e proposte; localStorage conserva soltanto l'accesso alla stanza. È un backend di sviluppo/singola istanza con disco persistente: non usare questo adattatore su filesystem effimeri o più processi/repliche.
-
-La logica pura in `src/lib/game.ts` è indipendente dal backend. Componenti e API usano il contratto `Room`/`Proposal`. La bozza `supabase/schema.sql` definisce il modello relazionale di destinazione con RLS chiusa di default. Non è una migrazione attiva né un backend Supabase già collegato. Il piano in `supabase/README.md` elenca i passaggi per il passaggio a Supabase Auth anonimo + Realtime, senza introdurre un login visibile.
-
-Prima di esporre pubblicamente: sostituire l'adattatore con Supabase, aggiungere limiti per creazione stanze/proposte, HTTPS e pulizia delle sessioni. Non inserire mai la service-role key nel client.
+Il test è esplicitamente limitato al progetto Briscore e crea sei account sintetici senza inviare email. Verifica cinque membri, esclusione esterni, RLS, scritture host, autore proposte, approvazioni, conflitti, Carichi/capotto, persistenza e ricezione Realtime. Al termine rimuove soltanto gli account e le stanze creati dal test. La credenziale amministrativa viene letta tramite CLI solo in memoria per le fixture, mai scritta nei file o usata dall'app.

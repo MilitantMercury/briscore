@@ -25,8 +25,8 @@ export function History({
             <span
               className={`result-tag ${hand.callerWon ? "positive" : "negative"}`}
             >
-              {hand.callerWon ? "Vinta" : "Persa"}{hand.capotto ? " · Capotto" : ""} ·{" "}
-              {calls[hand.callType].label}
+              {hand.callerWon ? "Vinta" : "Persa"}
+              {hand.capotto ? " · Capotto" : ""} · {calls[hand.callType].label}
             </span>
           </div>
           <p>

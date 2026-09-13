@@ -105,10 +105,46 @@ test("non accetta esiti mancanti e tipi sconosciuti", () => {
   );
 });
 test("raddoppia la mano vinta a capotto", () => {
-  assert.deepEqual(calculateHandScore(players, { ...valid, capotto: true }).map(r => r.delta), [4, 2, -2, -2, -2]);
-  assert.deepEqual(calculateHandScore(players, { ...valid, callType: "double", capotto: true }).map(r => r.delta), [8, 4, -4, -4, -4]);
-  assert.deepEqual(calculateHandScore(players, { callerId: "0", callType: "carichi", callerWon: true, capotto: true }).map(r => r.delta), [8, -2, -2, -2, -2]);
-  assert.throws(() => calculateHandScore(players, { ...valid, callerWon: false, capotto: true }));
+  assert.deepEqual(
+    calculateHandScore(players, {
+      ...valid,
+      callType: "triple",
+      capotto: true,
+    }).map((r) => r.delta),
+    [12, 6, -6, -6, -6],
+  );
+  assert.deepEqual(
+    calculateHandScore(players, { ...valid, capotto: true }).map(
+      (r) => r.delta,
+    ),
+    [4, 2, -2, -2, -2],
+  );
+  assert.deepEqual(
+    calculateHandScore(players, {
+      ...valid,
+      callType: "double",
+      capotto: true,
+    }).map((r) => r.delta),
+    [8, 4, -4, -4, -4],
+  );
+  assert.deepEqual(
+    calculateHandScore(players, {
+      callerId: "0",
+      callType: "carichi",
+      callerWon: true,
+      capotto: true,
+    }).map((r) => r.delta),
+    [8, -2, -2, -2, -2],
+  );
+  assert.throws(() =>
+    calculateHandScore(players, { ...valid, callerWon: false, capotto: true }),
+  );
+  assert.throws(() =>
+    calculateHandScore(players, {
+      ...valid,
+      capotto: "true",
+    } as unknown as HandInput),
+  );
 });
 test("ricalcola dal contenuto delle mani anche con delta salvati alterati", () => {
   const session: Session = {

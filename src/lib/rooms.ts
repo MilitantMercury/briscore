@@ -1,209 +1,93 @@
-import "server-only";
-import { randomBytes, createHash, timingSafeEqual } from "node:crypto";
-import { mkdir, readFile, writeFile, rename } from "node:fs/promises";
-import path from "node:path";
+import type { AuthContext } from "./auth-server";
+import { ApiError } from "./api-error";
 import {
   calculateHandScore,
   parseSession,
-  type Hand,
-  type Session,
+  validatePlayers,
+  type Player,
 } from "./game";
+import type { Room, RoomInvite } from "./room-types";
+export type { Room, Proposal } from "./room-types";
 
-export type Proposal = {
-  id: string;
-  author: string;
-  kind: "add" | "edit" | "delete";
-  hand: Hand;
-  baseHand?: Hand;
-  createdAt: string;
-};
-export type Room = {
-  id: string;
-  revision: number;
-  session: Session;
-  updatedAt: string;
-  proposals: Proposal[];
-};
-type StoredRoom = Room & { editorHash: string };
-const directory =
-  process.env.BRISCORE_DATA_DIR || path.join(process.cwd(), ".briscore-data");
-// Route bundles share this lock registry within a single Node process.
-const processState = globalThis as typeof globalThis & {
-  briscoreLocks?: Map<string, Promise<unknown>>;
-};
-const locks = (processState.briscoreLocks ??= new Map<
-  string,
-  Promise<unknown>
->());
-const hash = (token: string) =>
-  createHash("sha256").update(token).digest("hex");
-function filename(id: string) {
-  if (!/^[a-f0-9]{24}$/.test(id)) throw new Error("NOT_FOUND");
-  return path.join(directory, `${id}.json`);
+async function rpc(
+  auth: AuthContext,
+  name: string,
+  args: Record<string, unknown>,
+) {
+  const { data, error } = await auth.client.rpc(name, args);
+  if (error) throw ApiError.fromDatabase(error);
+  return data;
 }
-async function read(id: string): Promise<StoredRoom> {
-  try {
-    return JSON.parse(await readFile(filename(id), "utf8"));
-  } catch {
-    throw new Error("NOT_FOUND");
-  }
-}
-function publicRoom({
-  id,
-  revision,
-  session,
-  updatedAt,
-  proposals,
-}: StoredRoom): Room {
-  return { id, revision, session, updatedAt, proposals };
-}
-async function save(room: StoredRoom) {
-  await mkdir(directory, { recursive: true });
-  const target = filename(room.id);
-  const temporary = `${target}.${randomBytes(8).toString("hex")}.tmp`;
-  await writeFile(temporary, JSON.stringify(room), { mode: 0o600 });
-  await rename(temporary, target);
-}
-export async function createRoom(session: Session) {
-  const token = randomBytes(32).toString("hex");
-  const room: StoredRoom = {
-    id: randomBytes(12).toString("hex"),
-    revision: 0,
-    session: parseSession(JSON.stringify(session)),
-    updatedAt: new Date().toISOString(),
-    proposals: [],
-    editorHash: hash(token),
+function hydrate(data: Room): Room {
+  const session = parseSession(JSON.stringify(data.session));
+  return {
+    ...data,
+    session,
+    proposals: data.proposals.map((proposal) => ({
+      ...proposal,
+      hand: {
+        ...proposal.hand,
+        results: calculateHandScore(session.players, proposal.hand),
+      },
+    })),
   };
-  await save(room);
-  return { room: publicRoom(room), token };
 }
-export async function propose(
-  id: string,
-  input: Omit<Proposal, "id" | "createdAt">,
-) {
-  return mutate(id, async (room) => {
-    if (!room.session.players.some((p) => p.name === input.author))
-      throw new Error("Giocatore non valido.");
-    if (
-      !["add", "edit", "delete"].includes(input.kind) ||
-      room.proposals.length >= 30
-    )
-      throw new Error("Richiesta non valida o troppe richieste in attesa.");
-    const hand = {
-      ...input.hand,
-      results: calculateHandScore(room.session.players, input.hand),
-    };
-    parseSession(JSON.stringify({ ...room.session, hands: [hand] }));
-    const existing = room.session.hands.find((h) => h.id === hand.id);
-    if (
-      (input.kind === "add" && existing) ||
-      (input.kind !== "add" && !existing)
-    )
-      throw new Error("Mano non disponibile.");
-    room.proposals.push({
-      id: randomBytes(12).toString("hex"),
-      author: input.author,
-      kind: input.kind,
-      hand,
-      baseHand: existing,
-      createdAt: new Date().toISOString(),
-    });
-  });
+export async function createRoom(auth: AuthContext, players: Player[]) {
+  validatePlayers(players);
+  return hydrate(
+    await rpc(auth, "briscore_create_room", {
+      p_names: players.map((p) => p.name.trim()),
+    }),
+  );
 }
-async function mutate(id: string, action: (room: StoredRoom) => Promise<void>) {
-  const previous = locks.get(id) || Promise.resolve();
-  const operation = previous
-    .catch(() => {})
-    .then(async () => {
-      const room = await read(id);
-      await action(room);
-      room.revision++;
-      room.updatedAt = new Date().toISOString();
-      await save(room);
-      return publicRoom(room);
-    });
-  locks.set(id, operation);
-  try {
-    return await operation;
-  } finally {
-    if (locks.get(id) === operation) locks.delete(id);
-  }
+export async function getRoom(auth: AuthContext, id: string) {
+  return hydrate(await rpc(auth, "briscore_get_room", { p_room: id }));
 }
-export async function resolveProposal(
+export async function getInvite(
+  auth: AuthContext,
   id: string,
   token: string,
-  proposalId: string,
-  approve: boolean,
-) {
-  return mutate(id, async (room) => {
-    if (
-      !timingSafeEqual(Buffer.from(hash(token)), Buffer.from(room.editorHash))
-    )
-      throw new Error("FORBIDDEN");
-    const proposal = room.proposals.find((p) => p.id === proposalId);
-    if (!proposal) throw new Error("Richiesta già gestita.");
-    if (approve) {
-      const current = room.session.hands.find((h) => h.id === proposal.hand.id);
-      if (
-        proposal.kind !== "add" &&
-        JSON.stringify(current) !== JSON.stringify(proposal.baseHand)
-      )
-        throw new Error(
-          "La mano è cambiata: rifiuta questa richiesta e chiedi una nuova proposta.",
-        );
-      if (proposal.kind === "add") room.session.hands.push(proposal.hand);
-      else if (proposal.kind === "edit")
-        room.session.hands = room.session.hands.map((h) =>
-          h.id === proposal.hand.id ? proposal.hand : h,
-        );
-      else
-        room.session.hands = room.session.hands.filter(
-          (h) => h.id !== proposal.hand.id,
-        );
-      room.session = parseSession(JSON.stringify(room.session));
-    }
-    room.proposals = room.proposals.filter((p) => p.id !== proposalId);
-  });
+): Promise<RoomInvite> {
+  return rpc(auth, "briscore_invite", { p_room: id, p_token: token });
 }
-export async function getRoom(id: string) {
-  return publicRoom(await read(id));
-}
-export async function updateRoom(
+export async function joinRoom(
+  auth: AuthContext,
   id: string,
   token: string,
+  playerId: string,
+) {
+  return hydrate(
+    await rpc(auth, "briscore_join_room", {
+      p_room: id,
+      p_token: token,
+      p_player: playerId,
+    }),
+  );
+}
+export async function mutateRoom(
+  auth: AuthContext,
+  id: string,
   revision: number,
-  session: Session,
+  action: string,
+  payload: Record<string, unknown>,
 ) {
-  const previous = locks.get(id) || Promise.resolve();
-  const operation = previous
-    .catch(() => {})
-    .then(async () => {
-      const room = await read(id);
-      if (
-        !timingSafeEqual(Buffer.from(hash(token)), Buffer.from(room.editorHash))
-      )
-        throw new Error("FORBIDDEN");
-      if (revision !== room.revision) throw new Error("CONFLICT");
-      const validated = parseSession(JSON.stringify(session));
-      if (
-        JSON.stringify(validated.players) !==
-          JSON.stringify(room.session.players) ||
-        validated.createdAt !== room.session.createdAt
-      )
-        throw new Error("Giocatori della stanza non modificabili.");
-      const updated = {
-        ...room,
-        session: validated,
-        revision: revision + 1,
-        updatedAt: new Date().toISOString(),
-      };
-      await save(updated);
-      return publicRoom(updated);
-    });
-  locks.set(id, operation);
-  try {
-    return await operation;
-  } finally {
-    if (locks.get(id) === operation) locks.delete(id);
-  }
+  if (!Number.isSafeInteger(revision) || revision < 0)
+    throw new ApiError("INVALID_ACTION", 400);
+  return hydrate(
+    await rpc(auth, "briscore_mutate", {
+      p_room: id,
+      p_revision: revision,
+      p_action: action,
+      p_payload: payload,
+    }),
+  );
+}
+export async function listRooms(auth: AuthContext) {
+  const { data, error } = await auth.client
+    .from("rooms")
+    .select("id,created_at,updated_at")
+    .order("updated_at", { ascending: false })
+    .limit(30);
+  if (error) throw ApiError.fromDatabase(error);
+  return data;
 }

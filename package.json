@@ -9,9 +9,10 @@
     "lint": "eslint .",
     "test": "tsx --test tests/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "test:integration": "tsx --test tests/rooms.integration.ts"
+    "test:integration": "node --env-file=.env.local --import tsx --test tests/rooms.integration.ts"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
     "next": "^15.5.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

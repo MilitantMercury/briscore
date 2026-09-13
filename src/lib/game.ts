@@ -60,6 +60,8 @@ export function calculateHandScore(
   ) {
     throw new Error("Scegli un chiamato diverso dal chiamante.");
   }
+  if (input.capotto !== undefined && typeof input.capotto !== "boolean")
+    throw new Error("Il capotto deve essere un valore booleano.");
   if (input.capotto && !input.callerWon)
     throw new Error("Il capotto vale solo con una vittoria.");
   const sign = input.callerWon ? 1 : -1;
@@ -69,7 +71,8 @@ export function calculateHandScore(
     playerId: p.id,
     delta:
       sign *
-      multiplier * capottoMultiplier *
+      multiplier *
+      capottoMultiplier *
       (p.id === input.callerId
         ? input.callType === "carichi"
           ? 4

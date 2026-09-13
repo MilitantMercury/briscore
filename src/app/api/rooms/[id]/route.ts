@@ -1,53 +1,33 @@
-import { getRoom, updateRoom } from "@/lib/rooms";
+import { requireUser } from "@/lib/auth-server";
+import { apiError, readBody } from "@/lib/api-error";
+import { getRoom, mutateRoom } from "@/lib/rooms";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ id: string }> };
-export async function GET(_: Request, context: Context) {
+export async function GET(request: Request, context: Context) {
   try {
-    return Response.json(await getRoom((await context.params).id), {
-      headers: { "Cache-Control": "no-store" },
-    });
-  } catch {
-    return Response.json({ error: "Partita non trovata." }, { status: 404 });
+    return Response.json(
+      await getRoom(await requireUser(request), (await context.params).id),
+      { headers: { "Cache-Control": "no-store" } },
+    );
+  } catch (error) {
+    return apiError(error);
   }
 }
 export async function PUT(request: Request, context: Context) {
   try {
-    const text = await request.text();
-    if (text.length > 500_000)
-      return Response.json(
-        { error: "Sessione troppo grande." },
-        { status: 413 },
-      );
-    const { revision, session } = JSON.parse(text);
+    const auth = await requireUser(request);
+    const body = await readBody(request);
     return Response.json(
-      await updateRoom(
+      await mutateRoom(
+        auth,
         (await context.params).id,
-        request.headers.get("authorization")?.replace(/^Bearer /, "") || "",
-        revision,
-        session,
+        body.revision as number,
+        body.action as string,
+        body,
       ),
     );
   } catch (error) {
-    const message = error instanceof Error ? error.message : "";
-    const status =
-      message === "FORBIDDEN"
-        ? 403
-        : message === "CONFLICT"
-          ? 409
-          : message === "NOT_FOUND"
-            ? 404
-            : 400;
-    return Response.json(
-      {
-        error:
-          status === 409
-            ? "La partita è stata aggiornata. Riprova sulla versione più recente."
-            : status === 403
-              ? "Solo il segnapunti può modificare la partita."
-              : "Salvataggio non riuscito.",
-      },
-      { status },
-    );
+    return apiError(error);
   }
 }

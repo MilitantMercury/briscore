@@ -59,7 +59,9 @@ export function NewSession({
           </div>
           <span className="pill">5 giocatori</span>
         </div>
-        <p className="muted">Chi c’è al tavolo stasera?</p>
+        <p className="muted">
+          Inserisci il tuo nome al primo posto, poi gli altri quattro giocatori.
+        </p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -76,7 +78,9 @@ export function NewSession({
                 <input
                   autoComplete="off"
                   maxLength={30}
-                  placeholder={`Nome giocatore ${i + 1}`}
+                  placeholder={
+                    i === 0 ? "Il tuo nome · host" : `Nome giocatore ${i + 1}`
+                  }
                   value={name}
                   onChange={(e) =>
                     setNames(
@@ -96,7 +100,7 @@ export function NewSession({
             {busy ? "Creazione stanza…" : "Inizia sessione"} <span>→</span>
           </button>
           <p className="form-note">
-            Nessun account. Invita gli altri con un link.
+            Tu crei il tavolo. Gli altri accedono e scelgono il proprio posto.
           </p>
         </form>
       </section>

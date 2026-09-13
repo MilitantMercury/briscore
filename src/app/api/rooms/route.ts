@@ -1,20 +1,27 @@
-import { createRoom } from "@/lib/rooms";
+import { requireUser } from "@/lib/auth-server";
+import { apiError, readBody } from "@/lib/api-error";
+import { createRoom, listRooms } from "@/lib/rooms";
+import type { Player } from "@/lib/game";
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   try {
-    const text = await request.text();
-    if (text.length > 500_000)
-      return Response.json(
-        { error: "Sessione troppo grande." },
-        { status: 413 },
-      );
-    return Response.json(await createRoom(JSON.parse(text)), { status: 201 });
-  } catch {
+    const auth = await requireUser(request);
+    const body = await readBody(request);
     return Response.json(
-      {
-        error: "Impossibile creare la stanza. Controlla i giocatori e riprova.",
-      },
-      { status: 400 },
+      { room: await createRoom(auth, body.players as Player[]) },
+      { status: 201 },
     );
+  } catch (error) {
+    return apiError(error);
+  }
+}
+export async function GET(request: Request) {
+  try {
+    return Response.json(await listRooms(await requireUser(request)), {
+      headers: { "Cache-Control": "no-store" },
+    });
+  } catch (error) {
+    return apiError(error);
   }
 }

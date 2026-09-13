@@ -1,43 +1,39 @@
-import { propose, resolveProposal } from "@/lib/rooms";
+import { requireUser } from "@/lib/auth-server";
+import { apiError, readBody } from "@/lib/api-error";
+import { mutateRoom } from "@/lib/rooms";
 export const runtime = "nodejs";
 type Context = { params: Promise<{ id: string }> };
 export async function POST(request: Request, context: Context) {
   try {
-    const text = await request.text();
-    if (text.length > 10_000) throw new Error("Richiesta troppo grande.");
+    const auth = await requireUser(request);
+    const body = await readBody(request);
     return Response.json(
-      await propose((await context.params).id, JSON.parse(text)),
+      await mutateRoom(
+        auth,
+        (await context.params).id,
+        body.revision as number,
+        "propose",
+        body,
+      ),
     );
   } catch (error) {
-    return Response.json(
-      {
-        error:
-          error instanceof Error ? error.message : "Richiesta non riuscita.",
-      },
-      { status: 400 },
-    );
+    return apiError(error);
   }
 }
 export async function PATCH(request: Request, context: Context) {
   try {
-    const { proposalId, approve } = await request.json();
-    if (typeof approve !== "boolean" || typeof proposalId !== "string")
-      throw new Error("Richiesta non valida.");
+    const auth = await requireUser(request);
+    const body = await readBody(request);
     return Response.json(
-      await resolveProposal(
+      await mutateRoom(
+        auth,
         (await context.params).id,
-        request.headers.get("authorization")?.replace(/^Bearer /, "") || "",
-        proposalId,
-        approve,
+        body.revision as number,
+        "resolve",
+        body,
       ),
     );
   } catch (error) {
-    return Response.json(
-      {
-        error:
-          error instanceof Error ? error.message : "Operazione non riuscita.",
-      },
-      { status: 400 },
-    );
+    return apiError(error);
   }
 }

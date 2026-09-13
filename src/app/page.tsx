@@ -1,240 +1,45 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
 import { NewSession } from "@/components/new-session";
+import { AuthPanel } from "@/components/auth-panel";
 import { Scoreboard } from "@/components/scoreboard";
 import { HandForm } from "@/components/hand-form";
 import { History } from "@/components/history";
-import {
-  calculateHandScore,
-  calls,
-  formatScore,
-  type Hand,
-  type HandInput,
-  type Player,
-  type Session,
-} from "@/lib/game";
-import type { Proposal, Room } from "@/lib/rooms";
-
-const storageKey = "briscore-room-v1";
-type Credentials = { id: string; token?: string };
-async function api(url: string, options?: RequestInit) {
-  const response = await fetch(url, {
-    ...options,
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    cache: "no-store",
-    signal: AbortSignal.timeout(10000),
-  });
-  const result = await response.json();
-  if (!response.ok)
-    throw new Error(result.error || "Connessione non disponibile.");
-  return result;
-}
+import { JoinRoom } from "@/components/join-room";
+import { RecentRooms } from "@/components/recent-rooms";
+import { useGame } from "@/components/use-game";
+import { calls, formatScore } from "@/lib/game";
 export default function Home() {
-  const [room, setRoom] = useState<Room | null>(null);
-  const [credentials, setCredentials] = useState<Credentials | null>(null);
-  const [ready, setReady] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [online, setOnline] = useState(false);
-  const [message, setMessage] = useState("");
-  const [editor, setEditor] = useState<Hand | "new" | null>(null);
-  const [author, setAuthor] = useState("");
-  const [oldest, setOldest] = useState(false);
-  const [showStats, setShowStats] = useState(false);
-  const dialog = useRef<HTMLDialogElement>(null);
-  const host = !!credentials?.token;
-  useEffect(() => {
-    if (
-      !message.startsWith("Proposta inviata") &&
-      !message.startsWith("Partita aggiornata") &&
-      !message.startsWith("Proposta approvata") &&
-      !message.startsWith("Proposta rifiutata")
-    )
-      return;
-    const timer = setTimeout(() => setMessage(""), 6000);
-    return () => clearTimeout(timer);
-  }, [message]);
-  function acceptRoom(next: Room) {
-    setRoom((current) =>
-      !current || current.id !== next.id || next.revision >= current.revision
-        ? next
-        : current,
-    );
-  }
-  useEffect(() => {
-    let saved: Credentials | null = null;
-    try {
-      saved = JSON.parse(localStorage.getItem(storageKey) || "null");
-    } catch {
-      /* Storage may be unavailable. */
-    }
-    const id = new URLSearchParams(window.location.search).get("room");
-    setCredentials(
-      id ? { id, token: saved?.id === id ? saved.token : undefined } : saved,
-    );
-    setReady(true);
-  }, []);
-  useEffect(() => {
-    if (!credentials) return;
-    let active = true;
-    let timer: ReturnType<typeof setTimeout>;
-    const refresh = async () => {
-      try {
-        const next = await api(`/api/rooms/${credentials.id}`);
-        if (active) {
-          acceptRoom(next);
-          setOnline(true);
-        }
-      } catch {
-        if (active) setOnline(false);
-      } finally {
-        if (active) timer = setTimeout(refresh, 1500);
-      }
-    };
-    void refresh();
-    return () => {
-      active = false;
-      clearTimeout(timer);
-    };
-  }, [credentials]);
-  useEffect(() => {
-    if (editor && !dialog.current?.open) dialog.current?.showModal();
-    if (!editor && dialog.current?.open) dialog.current.close();
-  }, [editor]);
-  async function run(action: () => Promise<void>) {
-    setBusy(true);
-    setMessage("");
-    try {
-      await action();
-    } catch (error) {
-      setMessage(
-        error instanceof Error ? error.message : "Operazione non riuscita.",
-      );
-    } finally {
-      setBusy(false);
-    }
-  }
-  function remember(next: Credentials) {
-    setCredentials(next);
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(next));
-    } catch {
-      setMessage(
-        "Il browser non consente il salvataggio: mantieni aperta questa scheda per conservare l’accesso host.",
-      );
-    }
-    window.history.replaceState(null, "", `?room=${next.id}`);
-  }
-  async function start(players: Player[]) {
-    await run(async () => {
-      const result = await api("/api/rooms", {
-        method: "POST",
-        body: JSON.stringify({
-          version: 1,
-          players,
-          hands: [],
-          createdAt: new Date().toISOString(),
-        }),
-      });
-      remember({ id: result.room.id, token: result.token });
-      acceptRoom(result.room);
-      setOnline(true);
-    });
-  }
-  async function update(session: Session) {
-    acceptRoom(
-      await api(`/api/rooms/${room!.id}`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${credentials!.token}` },
-        body: JSON.stringify({ revision: room!.revision, session }),
-      }),
-    );
-  }
-  async function change(kind: Proposal["kind"], hand: Hand) {
-    if (!room) return;
-    if (!host && !author) {
-      setMessage("Seleziona il tuo nome prima di inviare una proposta.");
-      return;
-    }
-    await run(async () => {
-      if (host) {
-        const hands =
-          kind === "add"
-            ? [...room.session.hands, hand]
-            : kind === "edit"
-              ? room.session.hands.map((h) => (h.id === hand.id ? hand : h))
-              : room.session.hands.filter((h) => h.id !== hand.id);
-        await update({ ...room.session, hands });
-        setMessage("Partita aggiornata per tutti.");
-      } else {
-        acceptRoom(
-          await api(`/api/rooms/${room.id}/proposals`, {
-            method: "POST",
-            body: JSON.stringify({ author, kind, hand }),
-          }),
-        );
-        setMessage("Proposta inviata. In attesa dell’host.");
-      }
-      setEditor(null);
-    });
-  }
-  function save(input: HandInput) {
-    const initial = editor && editor !== "new" ? editor : undefined;
-    const hand: Hand = {
-      ...input,
-      id:
-        initial?.id ||
-        Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) =>
-          b.toString(16).padStart(2, "0"),
-        ).join(""),
-      createdAt: initial?.createdAt || new Date().toISOString(),
-      results: calculateHandScore(room!.session.players, input),
-    };
-    void change(initial ? "edit" : "add", hand);
-  }
-  async function resolve(proposal: Proposal, approve: boolean) {
-    await run(async () => {
-      acceptRoom(
-        await api(`/api/rooms/${room!.id}/proposals`, {
-          method: "PATCH",
-          headers: { Authorization: `Bearer ${credentials!.token}` },
-          body: JSON.stringify({ proposalId: proposal.id, approve }),
-        }),
-      );
-      setMessage(
-        approve
-          ? "Proposta approvata. Punti aggiornati."
-          : "Proposta rifiutata.",
-      );
-    });
-  }
-  function leave() {
-    if (
-      room &&
-      !window.confirm(
-        "Tornare alla schermata iniziale? La stanza resta disponibile tramite il suo link.",
-      )
-    )
-      return;
-    setRoom(null);
-    setCredentials(null);
-    setAuthor("");
-    setMessage("");
-    window.history.replaceState(null, "", "/");
-    // Preserve the host credential until another room is created.
-  }
-  async function share() {
-    const url = `${window.location.origin}/?room=${room!.id}`;
-    try {
-      if (navigator.share)
-        await navigator.share({ title: "Briscore — entra al tavolo", url });
-      else {
-        await navigator.clipboard.writeText(url);
-        setMessage("Link copiato. Invialo agli altri giocatori.");
-      }
-    } catch {
-      setMessage(`Link della partita: ${url}`);
-    }
-  }
+  const {
+    room,
+    credentials,
+    invite,
+    ready,
+    busy,
+    online,
+    message,
+    setMessage,
+    editor,
+    setEditor,
+    oldest,
+    setOldest,
+    showStats,
+    setShowStats,
+    userId,
+    authReady,
+    dialog,
+    host,
+    author,
+    remember,
+    start,
+    join,
+    change,
+    save,
+    resolve,
+    resetRoom,
+    leave,
+    signOut,
+    share,
+  } = useGame();
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -247,6 +52,11 @@ export default function Home() {
           <span className="brand-dot">◆</span>
         </button>
         <div className="header-right">
+          {userId && (
+            <button className="text-button" disabled={busy} onClick={signOut}>
+              Esci
+            </button>
+          )}
           {room ? (
             <>
               <span className={`connection ${online ? "connected" : ""}`}>
@@ -275,8 +85,12 @@ export default function Home() {
             </button>
           </div>
         )}
-        {!ready ? (
+        {!authReady || (userId && !ready) ? (
           <p className="loading">Prepariamo il tavolo…</p>
+        ) : !userId ? (
+          <AuthPanel />
+        ) : invite && !room ? (
+          <JoinRoom invite={invite} busy={busy} onJoin={join} onBack={leave} />
         ) : !room && credentials ? (
           <section className="panel waiting">
             <h1>Raggiungiamo il tavolo…</h1>
@@ -289,7 +103,10 @@ export default function Home() {
             </button>
           </section>
         ) : !room ? (
-          <NewSession busy={busy} onStart={start} />
+          <>
+            <RecentRooms onOpen={(id) => remember({ id })} />
+            <NewSession busy={busy} onStart={start} />
+          </>
         ) : (
           <>
             <div className="game-heading">
@@ -311,23 +128,15 @@ export default function Home() {
                 ↗ Invita giocatori
               </button>
             </div>
-            {!host && (
-              <div className="identity-bar">
-                <label>
-                  Tu sei
-                  <select
-                    value={author}
-                    onChange={(e) => setAuthor(e.target.value)}
-                  >
-                    <option value="">Scegli il tuo nome</option>
-                    {room.session.players.map((p) => (
-                      <option key={p.id}>{p.name}</option>
-                    ))}
-                  </select>
-                </label>
-                <p>Tutti possono proporre. L’host approva.</p>
-              </div>
-            )}
+            <div className="identity-bar">
+              <p>
+                Giochi come <b>{author}</b>
+                {host
+                  ? " · Sei l’host"
+                  : " · Le tue proposte saranno approvate dall’host"}{" "}
+                · {room.members.length}/5 al tavolo
+              </p>
+            </div>
             {!!room.proposals.length && (
               <a className="pending-banner" href="#requests">
                 {room.proposals.length}{" "}
@@ -459,6 +268,7 @@ export default function Home() {
                           : "elimina mano"}{" "}
                       · {calls[p.hand.callType].label} ·{" "}
                       {p.hand.callerWon ? "Vinta" : "Persa"}
+                      {p.hand.capotto ? " · Capotto ×2" : ""}
                     </p>
                     <p className="muted">
                       {
@@ -527,9 +337,7 @@ export default function Home() {
                           "Azzerare tutte le mani? I cinque giocatori resteranno nella stanza.",
                         )
                       )
-                        void run(async () => {
-                          await update({ ...room.session, hands: [] });
-                        });
+                        void resetRoom();
                     }}
                   >
                     Reset sessione

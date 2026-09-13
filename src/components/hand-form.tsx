@@ -142,14 +142,22 @@ export function HandForm({
             type="button"
             className={`choice loss ${won === false ? "selected" : ""}`}
             aria-pressed={won === false}
-            onClick={() => setWon(false)}
+            onClick={() => {
+              setWon(false);
+              setCapotto(false);
+            }}
           >
             ↘ Perso
           </button>
         </div>
       </fieldset>
       <label className="capotto-toggle">
-        <input type="checkbox" checked={capotto} onChange={(e) => setCapotto(e.target.checked)} disabled={won !== true} />
+        <input
+          type="checkbox"
+          checked={capotto}
+          onChange={(e) => setCapotto(e.target.checked)}
+          disabled={won !== true}
+        />
         Vittoria a capotto <small>(raddoppia i punti)</small>
       </label>
       <div className="preview" aria-live="polite">
