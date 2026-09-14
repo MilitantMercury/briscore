@@ -1,50 +1,45 @@
 import { formatScore, standings, type Session } from "@/lib/game";
 import { PlayerAvatar } from "./player-avatar";
-export function Scoreboard({ session, members }: { session: Session; members: { userId: string; playerId: string | null; avatar?: string; avatarImage?: string; globalRank?: number }[] }) {
+
+type Member = {
+  userId: string;
+  playerId: string | null;
+  avatar?: string;
+  avatarImage?: string;
+  globalRank?: number;
+};
+
+export function Scoreboard({ session, members }: { session: Session; members: Member[] }) {
   const rows = standings(session);
+  const leaderScore = rows[0]?.score;
   return (
-    <section className="panel scoreboard">
-      <div className="section-heading">
+    <section className="live-table">
+      <div className="table-glow" aria-hidden="true" />
+      <div className="table-heading">
         <div>
-          <span className="eyebrow">IL TAVOLO</span>
-          <h2>Classifica</h2>
+          <span className="eyebrow">TAVOLO IN DIRETTA</span>
+          <h2>Il punteggio vive qui.</h2>
         </div>
-        <span className="pill">
-          {session.hands.length} {session.hands.length === 1 ? "mano" : "mani"}
-        </span>
+        <span className="hands-counter"><b>{session.hands.length}</b> mani</span>
       </div>
-      <div className="table-labels">
-        <span>POS. / GIOCATORE</span>
-        <span>PUNTI</span>
+      <div className="player-cards">
+        {rows.map((player, index) => {
+          const member = members.find((item) => item.playerId === player.id);
+          const isLeader = player.score > 0 && player.score === leaderScore;
+          return (
+            <article className={`player-card ${isLeader ? "is-leading" : ""}`} key={player.id}>
+              <span className="seat-number">{index + 1}</span>
+              <PlayerAvatar name={player.name} avatar={member?.avatar} imagePath={member?.avatarImage} rank={member?.globalRank} size="large" />
+              <div className="player-card-name">
+                <b>{player.name}</b>
+                {isLeader && <small>IN TESTA</small>}
+              </div>
+              <strong className={player.score > 0 ? "positive" : player.score < 0 ? "negative" : "neutral"}>{formatScore(player.score)}</strong>
+            </article>
+          );
+        })}
       </div>
-      {rows.map((p) => (
-        <div
-          key={p.id}
-          className={`score-row ${p.score > 0 && p.score === rows[0].score ? "leader" : ""}`}
-        >
-          <span className="rank">
-            {rows.findIndex((r) => r.score === p.score) + 1}
-          </span>
-          <PlayerAvatar name={p.name} avatar={members.find((member) => member.playerId === p.id)?.avatar} imagePath={members.find((member) => member.playerId === p.id)?.avatarImage} rank={members.find((member) => member.playerId === p.id)?.globalRank} size="large" />
-          <span className="player-name">
-            {p.name}
-            {p.score > 0 && p.score === rows[0].score && (
-              <small>IN TESTA ♛</small>
-            )}
-          </span>
-          <strong
-            className={
-              p.score > 0 ? "positive" : p.score < 0 ? "negative" : "neutral"
-            }
-          >
-            {formatScore(p.score)}
-          </strong>
-        </div>
-      ))}
-      <div className="score-footer">
-        <span>Ognuno per sé. Tutti al tavolo.</span>
-        <span>Σ 0</span>
-      </div>
+      <p className="table-mantra"><span>♣</span> Cinque giocatori. Un solo tavolo. <span>♦</span></p>
     </section>
   );
 }

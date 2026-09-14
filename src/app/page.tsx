@@ -103,7 +103,7 @@ export default function Home() {
           </>
         ) : (
           <>
-            <div className="game-heading">
+            <div className="game-heading game-hero">
               <div>
                 <span className="eyebrow">
                   PARTITA DEL{" "}
@@ -122,7 +122,7 @@ export default function Home() {
                 ↗ Invita giocatori
               </button>
             </div>
-            <div className="identity-bar">
+            <div className="identity-bar live-identity">
               <p>
                 {spectator ? (
                   "Stai assistendo alla partita"
