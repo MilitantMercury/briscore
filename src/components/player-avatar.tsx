@@ -39,7 +39,7 @@ export function PlayerAvatar({
   }, [imagePath]);
   const badge = rank && rank <= 3 ? ["👑", "🥈", "🥉"][rank - 1] : null;
   return (
-    <span className={`player-avatar avatar-${avatar} avatar-${size}`} aria-label={`Avatar di ${name}`}>
+    <span className={`player-avatar avatar-${avatar} avatar-${size} ${imageUrl ? "has-image" : ""}`} aria-label={`Avatar di ${name}`}>
       {imageUrl ? <img src={imageUrl} alt="" /> : symbols[avatar] || name.slice(0, 1).toUpperCase()}
       {badge && <i className={`rank-badge rank-${rank}`}>{badge}</i>}
     </span>
