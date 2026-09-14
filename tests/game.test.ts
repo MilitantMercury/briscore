@@ -136,8 +136,11 @@ test("raddoppia la mano vinta a capotto", () => {
     }).map((r) => r.delta),
     [8, -2, -2, -2, -2],
   );
-  assert.throws(() =>
-    calculateHandScore(players, { ...valid, callerWon: false, capotto: true }),
+  assert.deepEqual(
+    calculateHandScore(players, { ...valid, callerWon: false, capotto: true }).map(
+      (r) => r.delta,
+    ),
+    [-4, -2, 2, 2, 2],
   );
   assert.throws(() =>
     calculateHandScore(players, {

@@ -16,6 +16,10 @@ export type Room = {
   inviteToken?: string;
   members: { userId: string; playerId: string }[];
   proposals: Proposal[];
+  status: "active" | "completed";
+  currentRound: number;
+  roundCompleted: boolean;
+  endedAt?: string;
 };
 export type RoomInvite = {
   id: string;

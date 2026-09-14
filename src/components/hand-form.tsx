@@ -144,7 +144,6 @@ export function HandForm({
             aria-pressed={won === false}
             onClick={() => {
               setWon(false);
-              setCapotto(false);
             }}
           >
             ↘ Perso
@@ -156,9 +155,9 @@ export function HandForm({
           type="checkbox"
           checked={capotto}
           onChange={(e) => setCapotto(e.target.checked)}
-          disabled={won !== true}
+          disabled={won === undefined}
         />
-        Vittoria a capotto <small>(raddoppia i punti)</small>
+        Capotto <small>(raddoppia i punti)</small>
       </label>
       <div className="preview" aria-live="polite">
         <span className="eyebrow">ANTEPRIMA PUNTI</span>

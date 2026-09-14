@@ -36,6 +36,8 @@ export default function Home() {
     save,
     resolve,
     resetRoom,
+    continueRound,
+    completeRoom,
     leave,
     signOut,
     share,
@@ -137,6 +139,13 @@ export default function Home() {
                 · {room.members.length}/5 al tavolo
               </p>
             </div>
+            {room.roundCompleted && room.status === "active" && (
+              <section className="panel notice">
+                <b>Giro {room.currentRound} completato.</b>{" "}
+                {host && <><button className="primary" onClick={() => void continueRound()}>Nuovo giro</button>{" "}<button className="secondary" onClick={() => void completeRoom()}>Concludi sessione</button></>}
+              </section>
+            )}
+            {room.status === "completed" && <section className="panel notice"><b>Sessione conclusa.</b> Risultato finale: {new Date(room.endedAt!).toLocaleString("it-IT")}.</section>}
             {!!room.proposals.length && (
               <a className="pending-banner" href="#requests">
                 {room.proposals.length}{" "}
@@ -205,7 +214,7 @@ export default function Home() {
                   </p>
                   <button
                     className="primary full"
-                    disabled={busy || !online}
+                    disabled={busy || !online || room.status === "completed" || room.roundCompleted}
                     onClick={() => {
                       setMessage("");
                       setEditor("new");

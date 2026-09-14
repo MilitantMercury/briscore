@@ -62,8 +62,6 @@ export function calculateHandScore(
   }
   if (input.capotto !== undefined && typeof input.capotto !== "boolean")
     throw new Error("Il capotto deve essere un valore booleano.");
-  if (input.capotto && !input.callerWon)
-    throw new Error("Il capotto vale solo con una vittoria.");
   const sign = input.callerWon ? 1 : -1;
   const capottoMultiplier = input.capotto ? 2 : 1;
   const multiplier = calls[input.callType].multiplier;

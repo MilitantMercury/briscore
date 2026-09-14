@@ -248,6 +248,12 @@ export function useGame() {
       );
     });
   }
+  async function continueRound() {
+    await run(async () => acceptRoom(await api<Room>(`/api/rooms/${room!.id}`, { method: "PUT", body: JSON.stringify({ revision: room!.revision, action: "continue_round" }) })));
+  }
+  async function completeRoom() {
+    await run(async () => acceptRoom(await api<Room>(`/api/rooms/${room!.id}`, { method: "PUT", body: JSON.stringify({ revision: room!.revision, action: "complete" }) })));
+  }
   function leave() {
     if (
       room &&
@@ -324,6 +330,8 @@ export function useGame() {
     save,
     resolve,
     resetRoom,
+    continueRound,
+    completeRoom,
     leave,
     signOut,
     share,
