@@ -62,11 +62,11 @@ export function History({
             ))}
           </div>
           <div className="hand-actions">
-            <button disabled={busy} onClick={() => onEdit(hand)}>
-              Modifica
+            <button className="hand-action hand-edit" disabled={busy} onClick={() => onEdit(hand)}>
+              ✎ Modifica
             </button>
-            <button disabled={busy} onClick={() => onDelete(hand)}>
-              Elimina
+            <button className="hand-action hand-delete" disabled={busy} onClick={() => onDelete(hand)}>
+              × Elimina
             </button>
           </div>
         </article>

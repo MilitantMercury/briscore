@@ -323,15 +323,15 @@ export default function Home() {
             )}
             <div className="session-actions">
               <button
-                className="text-button"
+                className="text-button stats-trigger"
                 onClick={() => setShowStats(!showStats)}
               >
                 {showStats ? "Nascondi statistiche" : "Statistiche giocatori"}
               </button>
               <div>
                 {host && room.status === "active" && (
-                  <button disabled={busy || !online} className="text-button danger" onClick={() => { if (window.confirm("Annullare questa partita? I punteggi non verranno conteggiati in classifica.")) void cancelRoom(); }}>
-                    Annulla partita
+                  <button disabled={busy || !online} className="text-button danger session-cancel" onClick={() => { if (window.confirm("Annullare questa partita? I punteggi non verranno conteggiati in classifica.")) void cancelRoom(); }}>
+                    ⊘ Annulla partita
                   </button>
                 )}
               </div>

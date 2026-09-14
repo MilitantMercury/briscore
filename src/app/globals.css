@@ -1512,6 +1512,49 @@ footer::before { content:"DENARI · COPPE · SPADE · BASTONI"; position:absolut
   top:-55% !important;
 }
 
+/* Secondary controls belong to the deck too: clear, tactile, never plain text. */
+.secondary {
+  border: 1px solid #e8d79755;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #1c3023e8, #101e16e8);
+  box-shadow: inset 0 1px #fff5c118, 0 5px 14px #0003;
+}
+.secondary:hover:not(:disabled) { border-color:#f3d978aa; background:#263c2b; }
+.text-button {
+  border: 1px solid transparent;
+  border-radius: 9px;
+  min-height: 34px;
+  padding: 6px 9px;
+  color: #cbd7bf;
+  background: transparent;
+}
+.text-button:hover:not(:disabled) { border-color:#e5d2874d; background:#d9e8bc0d; color:#f6f3e7; }
+.hand-actions { position:relative; z-index:2; display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
+.hand-action {
+  min-height: 31px;
+  padding: 5px 9px;
+  border: 1px solid #f4e4ad36;
+  border-radius: 7px;
+  background: #0b1811a8;
+  color: #d4dfca;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .15px;
+}
+.hand-edit:hover:not(:disabled) { border-color:#d8c06eaa; color:#fff1bc; background:#3a361b88; }
+.hand-delete { border-color:#e9877f3b; color:#d98d86; }
+.hand-delete:hover:not(:disabled) { border-color:#ef8c84aa; color:#ffd4cf; background:#4b201d88; }
+.session-actions {
+  margin-top: 30px;
+  padding: 12px 0;
+  border-top: 1px solid #e8dcae22;
+  border-bottom: 1px solid #e8dcae22;
+}
+.stats-trigger { border-color:#e2c76c54; background:#1a2d21b8; color:#e8d889; font-weight:700; }
+.stats-trigger:hover:not(:disabled) { border-color:#f4d875; background:#31452c; color:#fff0b1; }
+.session-cancel { border-color:#e47c743d; color:#dc8b83; font-weight:700; }
+.session-cancel:hover:not(:disabled) { border-color:#ed8b83aa; background:#55231f88; color:#ffd2cd; }
+
 /* The game is a scene first: the table leads, the controls follow the dealer. */
 .game-hud {
   min-height: 0;
