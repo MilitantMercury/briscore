@@ -40,7 +40,7 @@ export function Scoreboard({ session, members }: { session: Session; members: Me
           );
         })}
       </div>
-      <p className="table-mantra"><span>♣</span> Cinque giocatori. Un solo tavolo. <span>♦</span></p>
+      <p className="table-mantra"><span>BASTONI</span> Cinque giocatori. Un solo tavolo. <span>DENARI</span></p>
     </section>
   );
 }

@@ -103,7 +103,7 @@ export default function Home() {
           </>
         ) : (
           <>
-            <div className="game-heading game-hero">
+            <div className="game-heading game-hero briscola-hero">
               <div>
                 <span className="eyebrow">
                   PARTITA DEL{" "}
@@ -122,7 +122,7 @@ export default function Home() {
                 ↗ Invita giocatori
               </button>
             </div>
-            <div className="identity-bar live-identity">
+            <div className="identity-bar live-identity briscola-ribbon">
               <p>
                 {spectator ? (
                   "Stai assistendo alla partita"
@@ -157,7 +157,7 @@ export default function Home() {
             <div className="game-grid">
               <div>
                 <Scoreboard session={room.session} members={room.members} />
-                <section className="history-section">
+                <section className="history-section briscola-history">
                   <div className="section-heading">
                     <h2>
                       Mano dopo mano{" "}
@@ -203,7 +203,7 @@ export default function Home() {
                 </section>
               </div>
               <aside>
-                <section className="panel action-panel">
+                <section className="panel action-panel dealer-card">
                   <span className="eyebrow">PRONTI PER LA PROSSIMA?</span>
                   <h2>Com’è andata?</h2>
                   <p>
@@ -237,7 +237,7 @@ export default function Home() {
                     </button>
                   )}
                 </section>
-                <section className="rules-card">
+                <section className="rules-card briscola-rules">
                   <span className="eyebrow">UN RIPASSO AL VOLO</span>
                   <h3>Ogni chiamata ha il suo peso.</h3>
                   {Object.values(calls).map((c) => (

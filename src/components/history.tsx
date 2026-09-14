@@ -20,6 +20,9 @@ export function History({
     <>
       {session.hands.map((hand, i) => (
         <article className="history-hand" key={hand.id}>
+          <span className="hand-suit" aria-hidden="true">
+            {["DENARI", "COPPE", "SPADE", "BASTONI"][i % 4]}
+          </span>
           <div className="section-heading">
             <span className="hand-number">Mano #{i + 1}</span>
             <span

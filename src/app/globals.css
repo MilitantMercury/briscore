@@ -1206,6 +1206,20 @@ body {
     radial-gradient(circle at 95% 20%, #192f26 0, transparent 32rem),
     var(--felt);
 }
+body::before,
+body::after {
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  color: #c9d9a40a;
+  font-family: Georgia, serif;
+  font-weight: 700;
+  letter-spacing: .14em;
+  line-height: .78;
+  white-space: pre;
+}
+body::before { content: "DENARI\\A COPPE"; top: 23%; left: max(14px, calc(50% - 760px)); font-size: clamp(42px, 7vw, 94px); transform: rotate(-15deg); }
+body::after { content: "SPADE\\A BASTONI"; right: max(14px, calc(50% - 760px)); bottom: 12%; font-size: clamp(38px, 6vw, 82px); text-align: right; transform: rotate(15deg); }
 .topbar { border-color: #ffffff1a; }
 .panel, .card-surface {
   background: linear-gradient(145deg, #1b2a21, #142019);
@@ -1297,6 +1311,99 @@ body {
 /* Live table — the primary Briscore experience */
 .game-hero { padding: 48px 0 22px; }
 .game-hero h1 { font-size: clamp(38px, 5vw, 62px); letter-spacing: -3px; }
+.briscola-hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 160px;
+  padding: 38px 34px 27px;
+  margin-top: 25px;
+  border: 1px solid #ead99d3b;
+  border-radius: 24px 24px 12px 12px;
+  overflow: hidden;
+  background: linear-gradient(112deg, #1d3528 0%, #10231a 58%, #182b20 100%);
+  box-shadow: inset 0 1px #fff3c41c, 0 22px 48px #02090755;
+}
+.briscola-hero::before {
+  content: "BRISCOLA";
+  position: absolute;
+  right: 20px;
+  bottom: -26px;
+  z-index: -1;
+  color: #f4d67d0d;
+  font: 700 clamp(70px, 12vw, 156px)/1 Georgia, serif;
+  letter-spacing: -.08em;
+}
+.briscola-hero::after {
+  content: "DENARI  ·  COPPE  ·  SPADE  ·  BASTONI";
+  position: absolute;
+  top: 14px;
+  right: 28px;
+  color: #d9e5be80;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+}
+.briscola-hero .secondary { border-color: #e8d38b66; background: #0b1912b5; }
+.briscola-ribbon {
+  position: relative;
+  border: 1px solid #d3ba672e;
+  border-radius: 0 0 14px 14px;
+  margin: -1px 22px 26px;
+  padding: 11px 22px;
+  background: linear-gradient(90deg, #202c1b, #3d4021, #202c1b);
+  box-shadow: 0 10px 22px #0004;
+}
+.briscola-ribbon::before,
+.briscola-ribbon::after { content: "✦"; color: var(--gold); font-size: 11px; }
+.briscola-ribbon::before { margin-right: 12px; }.briscola-ribbon::after { margin-left: 12px; }
+.briscola-ribbon p { display: inline; }
+.dealer-card {
+  position: relative;
+  overflow: hidden;
+  border-color: #ead99d42;
+  background: linear-gradient(145deg, #263a2a, #15241b 78%);
+}
+.dealer-card::after {
+  content: "BRIS\A✦";
+  position: absolute;
+  right: -13px;
+  bottom: -32px;
+  color: #f7f1df0b;
+  font: 700 98px/.75 Georgia, serif;
+  white-space: pre;
+  transform: rotate(-9deg);
+}
+.dealer-card > * { position: relative; z-index: 1; }
+.dealer-card .primary { border: 1px solid #f8e6a044; }
+.briscola-rules {
+  position: relative;
+  border: 1px solid #ead99d36;
+  border-radius: 15px;
+  padding: 26px 20px 22px;
+  background: linear-gradient(155deg, #1f3024, #111d16);
+  overflow: hidden;
+}
+.briscola-rules::before { content: "REGOLA DEL MAZZO"; display:block; margin-bottom: 14px; color:#ddc989; font-size:9px; font-weight:800; letter-spacing:1.8px; }
+.briscola-rules > div { border-color: #f7edcf1c; }
+.briscola-rules > div::before { content: "◆"; margin-right:9px; color:#d6ad4d; font-size:9px; }
+.briscola-rules > p { border-top: 1px solid #f7edcf1c; padding-top: 14px; }
+.briscola-history { position:relative; padding-top: 12px; }
+.briscola-history::before { content:"IL LIBRETTO DEL TAVOLO"; display:block; color:#cdbd82; font-size:10px; font-weight:800; letter-spacing:1.7px; margin-bottom: 7px; }
+.history-hand {
+  position: relative;
+  overflow: hidden;
+  border-color: #e8dcae2e;
+  border-radius: 14px;
+  background: linear-gradient(105deg, #1b2c20, #142119);
+  box-shadow: 0 10px 25px #0004;
+}
+.history-hand::after { content:""; position:absolute; inset:7px; border:1px solid #f3e5b412; border-radius:9px; pointer-events:none; }
+.history-hand > *:not(.hand-suit) { position:relative; z-index:1; }
+.hand-suit { position:absolute; right:14px; top:13px; color:#e4c15c3d; font:700 10px Georgia,serif; letter-spacing:1.3px; }
+.history-hand .section-heading { padding-right:70px; }
+.table-mantra span { color:#d9c168; font-size:9px; font-weight:800; }
+footer { border-top: 1px solid #e9d99324; position:relative; }
+footer::before { content:"DENARI · COPPE · SPADE · BASTONI"; position:absolute; left:50%; transform:translateX(-50%); top:17px; color:#d3bd743f; font-size:8px; font-weight:800; letter-spacing:1.7px; white-space:nowrap; }
 .live-identity { background: #dfffb00c; border-color: #dfffb033; }
 .live-table {
   position: relative;
