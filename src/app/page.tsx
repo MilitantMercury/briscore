@@ -32,7 +32,6 @@ export default function Home() {
     change,
     save,
     resolve,
-    resetRoom,
     continueRound,
     completeRoom,
     cancelRoom,
