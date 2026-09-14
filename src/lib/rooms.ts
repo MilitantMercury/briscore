@@ -94,7 +94,7 @@ export async function cancelRoom(auth: AuthContext, id: string, revision: number
 export async function listRooms(auth: AuthContext) {
   const { data, error } = await auth.client
     .from("rooms")
-    .select("id,created_at,updated_at")
+    .select("id,created_at,updated_at,status,ended_at")
     .order("updated_at", { ascending: false })
     .limit(30);
   if (error) throw ApiError.fromDatabase(error);

@@ -1654,6 +1654,23 @@ footer::before { content:"DENARI · COPPE · SPADE · BASTONI"; position:absolut
   .auth-layout { grid-template-columns:1fr; gap:28px; padding:32px 0 50px; }.auth-pitch { padding:27px 22px; }.auth-pitch h1 { font-size:48px; }.auth-panel { padding:25px; }
 }
 
+/* My games is a playable archive, not a plain link list. */
+.games-scene { max-width:1040px; padding-top:34px; }
+.deck-back { padding:7px 10px; border:1px solid #e9d99332; border-radius:8px; background:#0a1710aa; color:#d5c982; }
+.games-hero-card { position:relative; overflow:hidden; margin:8px 0 24px; padding:35px 38px; border:1px solid #e8d58b52; border-radius:22px; background:linear-gradient(120deg,#233c2bdc,#102219e9); box-shadow:inset 0 1px #fff4c123,0 20px 50px #0007; }
+.games-hero-card::after { content:"MAZZO"; position:absolute; right:22px; bottom:-35px; color:#f2dfa30e; font:700 145px/.8 Georgia,serif; letter-spacing:-.08em; }
+.games-hero-card > * { position:relative; z-index:1; }.games-hero-card h1 { margin:7px 0 9px; font-size:clamp(42px,5vw,66px); letter-spacing:-3px; }.games-hero-card p { margin:0; color:#d0dbc4; font-size:16px; }
+.games-counter { display:inline-block; margin-top:19px; padding:7px 10px; border:1px solid #e7d47962; border-radius:999px; color:#f1dc88; background:#0a1710a8; font-size:11px; font-weight:800; letter-spacing:.8px; }
+.games-status { padding:25px; border:1px dashed #e5d58b4a; border-radius:15px; background:#112118a8; }.games-deck { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.game-card { position:relative; min-height:212px; display:flex; flex-direction:column; overflow:hidden; padding:22px; border:1px solid #ead89054; border-radius:18px; background:linear-gradient(145deg,#f7f0dc,#d9cfaf); color:#16221b; box-shadow:0 14px 28px #0006; transition:transform .25s ease, box-shadow .25s ease; }
+.game-card::before { content:"BRIS"; position:absolute; right:-8px; bottom:-24px; color:#1b2c1a0b; font:700 114px/.8 Georgia,serif; transform:rotate(-8deg); }.game-card:hover { transform:translateY(-6px) rotate(-.6deg); box-shadow:0 24px 35px #0009; }
+.game-card-number { position:absolute; top:15px; left:18px; color:#536051; font:700 12px Georgia,serif; }.game-card-suit { position:absolute; top:15px; right:17px; color:#8b7333; font-size:9px; font-weight:800; letter-spacing:1.2px; }
+.game-card-main { position:relative; z-index:1; margin-top:44px; }.game-status { display:inline-block; padding:4px 7px; border-radius:5px; font-size:9px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; }.status-active { background:#d2f08b; color:#26461d; }.status-completed { background:#d7e1d4; color:#405044; }.status-cancelled { background:#efd0cb; color:#7c362f; }
+.game-card h2 { margin:10px 0 5px; font-size:24px; letter-spacing:-1px; }.game-card p { margin:0; color:#617061; font-size:12px; }.game-card-action { position:relative; z-index:1; margin-top:auto; display:flex; align-items:center; justify-content:space-between; padding-top:13px; border-top:1px solid #1f302026; color:#394f31; font-size:12px; font-weight:800; }.game-card-action b { font-size:18px; color:#2c7338; }
+.game-completed { background:linear-gradient(145deg,#eceddf,#c9d1c3); }.game-cancelled { background:linear-gradient(145deg,#eee4d6,#d9c4b8); }.game-cancelled .game-card-action b { color:#a44a41; }
+.empty-deck { padding:55px 25px; border:1px dashed #e9d68a67; border-radius:20px; text-align:center; background:#13251bb8; }.empty-deck > span { color:#dfc86e; font-size:9px; font-weight:800; letter-spacing:1.5px; }.empty-deck h2 { margin:14px 0 8px; }.empty-deck p { color:#bdc8b3; }.empty-deck .primary { display:inline-flex; align-items:center; padding:0 18px; }
+@media (max-width:700px) { .games-scene { padding-top:24px; }.games-hero-card { padding:27px 22px; }.games-hero-card h1 { font-size:43px; }.games-deck { grid-template-columns:1fr; }.game-card { min-height:190px; }.game-card h2 { font-size:22px; } }
+
 /* The game is a scene first: the table leads, the controls follow the dealer. */
 .game-hud {
   min-height: 0;
