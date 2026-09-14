@@ -1257,7 +1257,7 @@ body {
 .player-avatar > img { position:relative; z-index:1; }
 .avatar-water,.avatar-sparkles { position:absolute; pointer-events:none; z-index:2; inset:-24px; }
 .flame-crown { position:absolute; z-index:0; width:154%; height:calc(100% + 52px); left:-27%; bottom:-10px; filter:drop-shadow(0 -4px 10px #ff451bbb); transform-origin:50% 100%; animation:flame-sway .9s ease-in-out infinite alternate; }
-.effect-frame { position:absolute !important; z-index:0 !important; width:225% !important; height:225% !important; left:-62.5% !important; top:-62.5% !important; object-fit:contain !important; border-radius:0 !important; animation:effect-frame-float 1.6s ease-in-out infinite alternate; }
+.effect-frame { max-width:none !important; position:absolute !important; z-index:0 !important; width:225% !important; height:225% !important; left:-62.5% !important; top:-62.5% !important; object-fit:contain !important; border-radius:0 !important; animation:effect-frame-float 1.6s ease-in-out infinite alternate; }
 .effect-frame-fire { filter:drop-shadow(0 0 10px #ff541faa); }.effect-frame-water { filter:drop-shadow(0 0 10px #28caffaa); animation-duration:2.2s; }.effect-frame-sparkles { filter:drop-shadow(0 0 9px #ffd45baa); animation-duration:1.9s; }
 .flame-crown .flame-inner { transform-origin:50% 100%; animation:flame-core .55s ease-in-out infinite alternate; }
 .avatar-water { z-index:0; inset:-17px; border-radius:48% 52% 48% 52%; background:conic-gradient(from 20deg,transparent 0 10%,#72efff 13%,#1179e7 20%,transparent 27% 43%,#88f8ff 47%,#198eea 55%,transparent 63% 78%,#5dd8ff 83%,transparent 90%); filter:drop-shadow(0 0 8px #32bfff); animation:water-orbit 2.3s linear infinite; }
