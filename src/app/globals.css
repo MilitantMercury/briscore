@@ -1599,6 +1599,61 @@ footer::before { content:"DENARI · COPPE · SPADE · BASTONI"; position:absolut
   .hand-detail .point-grid { grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px; }
 }
 
+/* Root states: entering or dealing a new game should feel like part of the same table. */
+.landing-table { position:relative; min-height:calc(100vh - 205px); align-items:center; }
+.landing-copy { position:relative; padding:32px 0 32px 28px; }
+.landing-copy::before {
+  content:"";
+  position:absolute;
+  width:min(490px, 115%);
+  height:390px;
+  left:-95px;
+  top:50%;
+  transform:translateY(-50%) rotate(-7deg);
+  border:1px solid #ebd37a2c;
+  border-radius:26px;
+  background:linear-gradient(130deg,#1f3727bd,#0b1911aa);
+  box-shadow:inset 0 0 0 9px #f3dc9610, 0 22px 60px #0007;
+  z-index:-1;
+}
+.landing-copy .eyebrow { color:#ead58b; }
+.landing-copy h1 { max-width:680px; font-size:clamp(49px, 5.4vw, 76px); line-height:.97; }
+.landing-copy h1 em { color:#dfffa5; font-style:normal; }
+.landing-copy > p { color:#d3dec9; font-size:18px; }
+.deal-steps { display:grid; gap:9px; max-width:390px; }
+.deal-steps span { padding:11px 13px; border:1px solid #eadca228; border-radius:9px; background:#08150ec2; }
+.deal-steps span b { color:#f6f0dc; }
+.table-note { margin-top:28px; display:flex; align-items:center; gap:10px; color:#e6d274; font-size:10px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; }
+.table-note span { padding:7px 9px; border:1px solid #e9cc6d55; border-radius:6px; }
+.table-note p { margin:0; }
+.deal-card { position:relative; overflow:hidden; border:1px solid #ead7906e; border-radius:21px; background:linear-gradient(145deg,#263e2cf2,#112218f4); box-shadow:inset 0 1px #fff4c12b, 0 26px 58px #0009; }
+.deal-card::before { content:"BRIS"; position:absolute; right:-15px; top:-35px; color:#f5dfa90d; font:700 175px/.8 Georgia,serif; transform:rotate(7deg); }
+.deal-card > * { position:relative; z-index:1; }
+.setup-panel { padding:35px; }
+.setup-panel .section-heading { padding-bottom:17px; border-bottom:1px solid #e9d99325; }
+.setup-panel .pill { border-color:#e9d9935e; color:#f0d87e; background:#101e15bd; }
+.profile-callout { display:grid; gap:3px; padding:16px; border:1px solid #d9c46a52; border-radius:11px; background:linear-gradient(100deg,#3b4125a8,#1b2e20a8); color:#cbd8c2; font-size:13px; }
+.profile-callout span { color:#f1d879; font-size:9px; font-weight:800; letter-spacing:1.4px; }.profile-callout b { color:#fff8dd; }
+.setup-panel form .primary { margin-top:17px; border:1px solid #f9e59d55; }
+.auth-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(370px,.78fr); gap:74px; align-items:center; min-height:calc(100vh - 205px); padding:55px 0 75px; }
+.auth-pitch { position:relative; padding:36px 32px; }
+.auth-pitch::before { content:""; position:absolute; inset:0 -20px; z-index:-1; border-radius:28px; background:radial-gradient(circle at 40% 45%,#d3f77e19,transparent 45%),linear-gradient(135deg,#203a2a91,#08140daf); border:1px solid #e9d79125; box-shadow:inset 0 0 0 10px #f3df9a08; }
+.auth-pitch h1 { margin:11px 0 19px; font-size:clamp(48px,5.6vw,76px); line-height:.98; letter-spacing:-3.5px; }
+.auth-pitch p { max-width:480px; color:#d5dfcb; font-size:17px; }
+.auth-suits { display:flex; flex-wrap:wrap; gap:8px; margin-top:32px; }
+.auth-suits span { padding:8px 10px; border:1px solid #ecd77d4b; border-radius:7px; background:#08140faf; color:#e8d378; font-size:9px; font-weight:800; letter-spacing:1.1px; }
+.auth-panel { max-width:none; margin:0; padding:34px; }
+.auth-panel h2 { font-size:31px; }.auth-panel .auth-buttons { gap:10px; }
+.auth-provider { position:relative; min-height:53px; padding-left:47px; text-align:left; font-weight:700; }
+.auth-provider::before { position:absolute; left:16px; top:50%; transform:translateY(-50%); width:20px; height:20px; display:grid; place-items:center; border-radius:50%; background:#f7f2e1; color:#17221d; font-size:12px; font-weight:900; }
+.auth-google::before { content:"G"; color:#4285f4; }.auth-apple::before { content:"●"; background:transparent; color:#f0f2eb; font-size:22px; }
+.auth-divider { display:flex; align-items:center; gap:10px; color:#b8c4ad; }.auth-divider::before,.auth-divider::after { content:""; height:1px; flex:1; background:#e9d99325; }
+.auth-email { border-color:#e4d38b4a; background:#07130ebd; }.auth-panel .primary { margin-top:4px; }
+@media (max-width:800px) {
+  .landing-table,.auth-layout { min-height:0; }.landing-copy { padding:25px 18px; }.landing-copy::before { left:-40px; width:calc(100% + 60px); height:330px; }.landing-copy h1 { font-size:48px; }
+  .auth-layout { grid-template-columns:1fr; gap:28px; padding:32px 0 50px; }.auth-pitch { padding:27px 22px; }.auth-pitch h1 { font-size:48px; }.auth-panel { padding:25px; }
+}
+
 /* The game is a scene first: the table leads, the controls follow the dealer. */
 .game-hud {
   min-height: 0;

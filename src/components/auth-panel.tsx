@@ -86,7 +86,14 @@ export function AuthPanel() {
     }
   }
   return (
-    <section className="panel setup-panel auth-panel">
+    <div className="auth-layout">
+      <section className="auth-pitch">
+        <span className="eyebrow">ENTRA AL TAVOLO</span>
+        <h1>La tua partita<br />ti aspetta<span className="lime">.</span></h1>
+        <p>Accedi una volta. Ritrovi il tuo profilo, le partite e la classifica su ogni dispositivo.</p>
+        <div className="auth-suits" aria-hidden="true"><span>DENARI</span><span>COPPE</span><span>SPADE</span><span>BASTONI</span></div>
+      </section>
+    <section className="panel setup-panel auth-panel deal-card">
       <span className="eyebrow">IL TUO ACCOUNT</span>
       <h2>Accedi a Briscore</h2>
       <p className="muted">
@@ -94,14 +101,14 @@ export function AuthPanel() {
       </p>
       <div className="auth-buttons">
         <button
-          className="secondary full"
+          className="secondary full auth-provider auth-google"
           disabled={busy || !providers.google}
           onClick={() => oauth("google")}
         >
           Continua con Google{!providers.google ? " · presto" : ""}
         </button>
         <button
-          className="secondary full"
+          className="secondary full auth-provider auth-apple"
           disabled={busy || !providers.apple}
           onClick={() => oauth("apple")}
         >
@@ -132,5 +139,6 @@ export function AuthPanel() {
         </p>
       )}
     </section>
+    </div>
   );
 }
