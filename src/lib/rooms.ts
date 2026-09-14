@@ -88,3 +88,6 @@ export async function listRooms(auth: AuthContext) {
   if (error) throw ApiError.fromDatabase(error);
   return data;
 }
+export async function leaderboard(auth: AuthContext) {
+  return rpc(auth, "briscore_leaderboard", {});
+}

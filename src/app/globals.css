@@ -766,6 +766,12 @@ footer > span:last-child {
 .summary-row { display: flex; justify-content: space-between; padding: 16px 12px; border-bottom: 1px solid var(--border); }
 .summary-row.winner { background: #28331e; border-radius: 8px; }
 .summary-row strong { font-size: 22px; }
+.leaderboard-page h1 { margin: 8px 0 10px; font-size: 42px; letter-spacing: -2px; }
+.leaderboard-list { display: grid; gap: 0; margin-top: 28px; }
+.leaderboard-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 12px; border-bottom: 1px solid var(--border); }
+.leaderboard-row.winner { background: #28331e; border-radius: 8px; }
+.leaderboard-row strong { font-size: 22px; }
+.leaderboard-row small { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; }
 .notice.panel {
   display: flex;
   align-items: center;
