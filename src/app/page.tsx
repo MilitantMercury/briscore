@@ -333,25 +333,6 @@ export default function Home() {
                 {showStats ? "Nascondi statistiche" : "Statistiche giocatori"}
               </button>
               <div>
-                <button className="text-button" onClick={leave}>
-                  Nuova sessione
-                </button>
-                {host && (
-                  <button
-                    disabled={busy || !online}
-                    className="text-button danger"
-                    onClick={() => {
-                      if (
-                        window.confirm(
-                          "Azzerare tutte le mani? I cinque giocatori resteranno nella stanza.",
-                        )
-                      )
-                        void resetRoom();
-                    }}
-                  >
-                    Reset sessione
-                  </button>
-                )}
                 {host && room.status === "active" && (
                   <button disabled={busy || !online} className="text-button danger" onClick={() => { if (window.confirm("Annullare questa partita? I punteggi non verranno conteggiati in classifica.")) void cancelRoom(); }}>
                     Annulla partita
