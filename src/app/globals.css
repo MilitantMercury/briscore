@@ -1256,7 +1256,7 @@ body {
 .avatar-effect-fire,.avatar-effect-water,.avatar-effect-sparkles { isolation:isolate; }
 .player-avatar > img { position:relative; z-index:1; }
 .avatar-water,.avatar-sparkles { position:absolute; pointer-events:none; z-index:2; inset:-24px; }
-.flame-crown { position:absolute; z-index:0; width:140%; height:auto; left:-20%; bottom:43%; filter:drop-shadow(0 -4px 10px #ff451bbb); transform-origin:50% 100%; animation:flame-sway .9s ease-in-out infinite alternate; }
+.flame-crown { position:absolute; z-index:0; width:154%; height:calc(100% + 52px); left:-27%; bottom:-10px; filter:drop-shadow(0 -4px 10px #ff451bbb); transform-origin:50% 100%; animation:flame-sway .9s ease-in-out infinite alternate; }
 .flame-crown .flame-inner { transform-origin:50% 100%; animation:flame-core .55s ease-in-out infinite alternate; }
 .avatar-water { z-index:0; inset:-17px; border-radius:48% 52% 48% 52%; background:conic-gradient(from 20deg,transparent 0 10%,#72efff 13%,#1179e7 20%,transparent 27% 43%,#88f8ff 47%,#198eea 55%,transparent 63% 78%,#5dd8ff 83%,transparent 90%); filter:drop-shadow(0 0 8px #32bfff); animation:water-orbit 2.3s linear infinite; }
 .avatar-water::before,.avatar-water::after { content:""; position:absolute; border:2px solid #94f7ff; border-radius:50%; opacity:.75; }.avatar-water::before{inset:-7px;animation:water-ripple 1.8s ease-out infinite}.avatar-water::after{inset:6px;animation:water-ripple 1.8s .6s ease-out infinite}
