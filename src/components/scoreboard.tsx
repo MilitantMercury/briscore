@@ -6,6 +6,7 @@ type Member = {
   playerId: string | null;
   avatar?: string;
   avatarImage?: string;
+  avatarEffect?: string;
   globalRank?: number;
 };
 
@@ -29,7 +30,7 @@ export function Scoreboard({ session, members }: { session: Session; members: Me
           return (
             <article className={`player-card ${isLeader ? "is-leading" : ""}`} key={player.id}>
               <span className="seat-number">{index + 1}</span>
-              <PlayerAvatar name={player.name} avatar={member?.avatar} imagePath={member?.avatarImage} rank={member?.globalRank} size="large" />
+              <PlayerAvatar name={player.name} avatar={member?.avatar} imagePath={member?.avatarImage} effect={member?.avatarEffect} rank={member?.globalRank} size="large" />
               <div className="player-card-name">
                 <b>{player.name}</b>
                 {isLeader && <small>IN TESTA</small>}

@@ -17,12 +17,14 @@ export const avatarOptions = Object.keys(symbols);
 export function PlayerAvatar({
   avatar = "bastoni",
   imagePath,
+  effect,
   name,
   rank,
   size = "normal",
 }: {
   avatar?: string;
   imagePath?: string;
+  effect?: string;
   name: string;
   rank?: number | null;
   size?: "small" | "normal" | "large";
@@ -39,7 +41,10 @@ export function PlayerAvatar({
   }, [imagePath]);
   const badge = rank && rank <= 3 ? ["👑", "🥈", "🥉"][rank - 1] : null;
   return (
-    <span className={`player-avatar avatar-${avatar} avatar-${size} ${imageUrl ? "has-image" : ""}`} aria-label={`Avatar di ${name}`}>
+    <span className={`player-avatar avatar-${avatar} avatar-${size} ${imageUrl ? "has-image" : ""} ${effect ? `avatar-effect-${effect}` : ""}`} aria-label={`Avatar di ${name}`}>
+      {effect === "fire" && <span className="avatar-flames" aria-hidden="true" />}
+      {effect === "water" && <span className="avatar-water" aria-hidden="true" />}
+      {effect === "sparkles" && <span className="avatar-sparkles" aria-hidden="true" />}
       {imageUrl ? <img src={imageUrl} alt="" /> : symbols[avatar] || name.slice(0, 1).toUpperCase()}
       {badge && <i className={`rank-badge rank-${rank}`}>{badge}</i>}
     </span>
