@@ -752,6 +752,15 @@ footer > span:last-child {
 .profile-editor label { display: grid; gap: 6px; color: var(--muted); }
 .profile-editor input { width: 100%; }
 .menu-message { margin: 0; font-size: 12px; color: var(--muted); }
+.standalone-page { max-width: 720px; margin: 0 auto; padding: 44px 0 80px; }
+.back-link { display: inline-block; margin-bottom: 22px; color: var(--muted); font-size: 13px; }
+.profile-page, .games-page { padding: 32px; }
+.profile-page h1, .games-page h1 { margin: 8px 0 10px; font-size: 42px; letter-spacing: -2px; }
+.profile-page form { display: grid; gap: 18px; margin-top: 28px; }
+.profile-page label { display: grid; gap: 8px; }
+.profile-page input[readonly] { color: var(--muted); }
+.games-list { display: grid; gap: 10px; margin-top: 28px; }
+.games-list .secondary { text-align: left; }
 .notice.panel {
   display: flex;
   align-items: center;

@@ -29,7 +29,6 @@ export default function Home() {
     dialog,
     host,
     author,
-    remember,
     start,
     join,
     change,
@@ -55,7 +54,7 @@ export default function Home() {
         </button>
         <div className="header-right">
           {userId && (
-            <AccountMenu onOpen={(id) => remember({ id })} onSignOut={() => void signOut()} />
+            <AccountMenu onSignOut={() => void signOut()} />
           )}
           {room ? (
             <>
