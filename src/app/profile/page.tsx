@@ -4,6 +4,24 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase-browser";
 import { avatarOptions, PlayerAvatar } from "@/components/player-avatar";
 
+async function compressAvatar(file: File): Promise<File> {
+  if (file.size <= 2_097_152) return file;
+  const source = await createImageBitmap(file);
+  const scale = Math.min(1, 512 / Math.max(source.width, source.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(source.width * scale));
+  canvas.height = Math.max(1, Math.round(source.height * scale));
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("CANVAS_UNAVAILABLE");
+  context.drawImage(source, 0, 0, canvas.width, canvas.height);
+  source.close();
+  for (const quality of [0.88, 0.76, 0.64, 0.52]) {
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", quality));
+    if (blob && blob.size <= 2_097_152) return new File([blob], "avatar.webp", { type: "image/webp" });
+  }
+  throw new Error("AVATAR_TOO_LARGE");
+}
+
 export default function ProfilePage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -29,12 +47,15 @@ export default function ProfilePage() {
     }
     let imagePath = avatarImage;
     if (file) {
-      if (!['image/jpeg','image/png','image/webp'].includes(file.type) || file.size > 2_097_152) { setMessage("Scegli un JPG, PNG o WebP fino a 2 MB."); return; }
+      if (!['image/jpeg','image/png','image/webp'].includes(file.type)) { setMessage("Scegli un JPG, PNG o WebP."); return; }
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) { setMessage("Accedi di nuovo per aggiornare il profilo."); return; }
-      const extension = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
+      setMessage(file.size > 2_097_152 ? "Riduciamo la foto per l’avatar…" : "Carichiamo l’avatar…");
+      let uploadFile: File;
+      try { uploadFile = await compressAvatar(file); } catch { setMessage("Non riesco a ridurre questa immagine. Prova con un’altra foto."); return; }
+      const extension = uploadFile.type === 'image/png' ? 'png' : uploadFile.type === 'image/webp' ? 'webp' : 'jpg';
       imagePath = `${userData.user.id}/avatar.${extension}`;
-      const { error: uploadError } = await supabase.storage.from('avatars').upload(imagePath, file, { upsert: true, contentType: file.type });
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(imagePath, uploadFile, { upsert: true, contentType: uploadFile.type });
       if (uploadError) { setMessage("Non riesco a caricare l’immagine."); return; }
     }
     const { error } = await supabase.auth.updateUser({ data: { display_name: next, avatar, avatarImage: imagePath } });
