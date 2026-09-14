@@ -1,6 +1,6 @@
 import { formatScore, standings, type Session } from "@/lib/game";
 import { PlayerAvatar } from "./player-avatar";
-export function Scoreboard({ session, members }: { session: Session; members: { userId: string; playerId: string | null; avatar?: string; globalRank?: number }[] }) {
+export function Scoreboard({ session, members }: { session: Session; members: { userId: string; playerId: string | null; avatar?: string; avatarImage?: string; globalRank?: number }[] }) {
   const rows = standings(session);
   return (
     <section className="panel scoreboard">
@@ -25,7 +25,7 @@ export function Scoreboard({ session, members }: { session: Session; members: { 
           <span className="rank">
             {rows.findIndex((r) => r.score === p.score) + 1}
           </span>
-          <PlayerAvatar name={p.name} avatar={members.find((member) => member.playerId === p.id)?.avatar} rank={members.find((member) => member.playerId === p.id)?.globalRank} />
+          <PlayerAvatar name={p.name} avatar={members.find((member) => member.playerId === p.id)?.avatar} imagePath={members.find((member) => member.playerId === p.id)?.avatarImage} rank={members.find((member) => member.playerId === p.id)?.globalRank} size="large" />
           <span className="player-name">
             {p.name}
             {p.score > 0 && p.score === rows[0].score && (
