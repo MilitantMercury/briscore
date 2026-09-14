@@ -2,14 +2,13 @@
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabase-browser";
 import { api, RequestError } from "@/lib/api-client";
-import type { Room, RoomInvite } from "@/lib/room-types";
+import type { Room } from "@/lib/room-types";
 
 export type RoomReference = { id: string; inviteToken?: string };
 export function useRoomSync(
   reference: RoomReference | null,
   userId: string | null,
   acceptRoom: (room: Room) => void,
-  setInvite: (invite: RoomInvite | null) => void,
   setOnline: (online: boolean) => void,
   setError: (message: string) => void,
 ) {
@@ -33,7 +32,6 @@ export function useRoomSync(
         const room = await api<Room>(`/api/rooms/${reference.id}`);
         if (!active) return;
         acceptRoom(room);
-        setInvite(null);
         setOnline(true);
         if (!channel) subscribe();
       } catch (error) {
@@ -45,7 +43,7 @@ export function useRoomSync(
           reference.inviteToken
         ) {
           try {
-            const invite = await api<RoomInvite>(
+            const room = await api<Room>(
               `/api/rooms/${reference.id}/join`,
               {
                 method: "POST",
@@ -53,8 +51,10 @@ export function useRoomSync(
               },
             );
             if (active) {
-              setInvite(invite);
+              acceptRoom(room);
               setError("");
+              setOnline(true);
+              if (!channel) subscribe();
             }
           } catch (inviteError) {
             if (active)
@@ -126,5 +126,5 @@ export function useRoomSync(
       document.removeEventListener("visibilitychange", recover);
       if (channel) void supabase.removeChannel(channel);
     };
-  }, [reference, userId, acceptRoom, setInvite, setOnline, setError]);
+  }, [reference, userId, acceptRoom, setOnline, setError]);
 }

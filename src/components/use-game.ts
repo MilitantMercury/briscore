@@ -6,7 +6,7 @@ import {
   type Hand,
   type HandInput,
 } from "@/lib/game";
-import type { Proposal, Room, RoomInvite } from "@/lib/room-types";
+import type { Proposal, Room } from "@/lib/room-types";
 import { supabase } from "@/lib/supabase-browser";
 import { api, RequestError } from "@/lib/api-client";
 
@@ -15,7 +15,6 @@ const pendingRoomKey = "briscore-pending-room";
 export function useGame() {
   const [room, setRoom] = useState<Room | null>(null);
   const [credentials, setCredentials] = useState<RoomReference | null>(null);
-  const [invite, setInvite] = useState<RoomInvite | null>(null);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
   const [online, setOnline] = useState(false);
@@ -33,6 +32,7 @@ export function useGame() {
   )?.playerId;
   const author =
     room?.session.players.find((player) => player.id === playerId)?.name || "";
+  const spectator = !!room && !playerId;
   function setEditor(next: Hand | "new" | null) {
     setEditorState(next);
     setEditorRevision(next === null ? null : (room?.revision ?? null));
@@ -61,7 +61,6 @@ export function useGame() {
   }, []);
   useEffect(() => {
     setRoom(null);
-    setInvite(null);
     setEditorState(null);
     setEditorRevision(null);
     setCredentials(null);
@@ -125,7 +124,6 @@ export function useGame() {
     credentials,
     userId,
     acceptRoom,
-    setInvite,
     setOnline,
     setMessage,
   );
@@ -175,22 +173,6 @@ export function useGame() {
       remember({ id: result.room.id, inviteToken: result.room.inviteToken });
       acceptRoom(result.room);
       setOnline(true);
-    });
-  }
-  async function join(playerId: string, name: string) {
-    await run(async () => {
-      const next = await api<Room>(`/api/rooms/${credentials!.id}/join`, {
-        method: "POST",
-        body: JSON.stringify({
-          inviteToken: credentials!.inviteToken,
-          playerId,
-          name,
-        }),
-      });
-      acceptRoom(next);
-      setInvite(null);
-      setOnline(true);
-      remember({ ...credentials! });
     });
   }
   async function change(kind: Proposal["kind"], hand: Hand) {
@@ -279,7 +261,6 @@ export function useGame() {
       return;
     setRoom(null);
     setCredentials(null);
-    setInvite(null);
     setEditor(null);
     setMessage("");
     try {
@@ -295,7 +276,6 @@ export function useGame() {
       if (error) throw error;
       setRoom(null);
       setCredentials(null);
-      setInvite(null);
       setEditor(null);
     });
   }
@@ -321,7 +301,6 @@ export function useGame() {
   return {
     room,
     credentials,
-    invite,
     ready,
     busy,
     online,
@@ -340,7 +319,7 @@ export function useGame() {
     author,
     remember,
     start,
-    join,
+    spectator,
     change,
     save,
     resolve,

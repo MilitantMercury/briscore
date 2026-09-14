@@ -61,6 +61,15 @@ export async function joinRoom(
     }),
   );
 }
+export async function enterRoom(
+  auth: AuthContext,
+  id: string,
+  token: string,
+) {
+  return hydrate(
+    await rpc(auth, "briscore_enter_room", { p_room: id, p_token: token }),
+  );
+}
 export async function mutateRoom(
   auth: AuthContext,
   id: string,

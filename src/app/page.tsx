@@ -4,7 +4,6 @@ import { AuthPanel } from "@/components/auth-panel";
 import { Scoreboard } from "@/components/scoreboard";
 import { HandForm } from "@/components/hand-form";
 import { History } from "@/components/history";
-import { JoinRoom } from "@/components/join-room";
 import { AccountMenu } from "@/components/account-menu";
 import { useGame } from "@/components/use-game";
 import { calls, formatScore } from "@/lib/game";
@@ -12,7 +11,6 @@ export default function Home() {
   const {
     room,
     credentials,
-    invite,
     ready,
     busy,
     online,
@@ -29,8 +27,8 @@ export default function Home() {
     dialog,
     host,
     author,
+    spectator,
     start,
-    join,
     change,
     save,
     resolve,
@@ -88,8 +86,6 @@ export default function Home() {
           <p className="loading">Prepariamo il tavolo…</p>
         ) : !userId ? (
           <AuthPanel />
-        ) : invite && !room ? (
-          <JoinRoom invite={invite} busy={busy} onJoin={join} onBack={leave} />
         ) : !room && credentials ? (
           <section className="panel waiting">
             <h1>Raggiungiamo il tavolo…</h1>
@@ -128,11 +124,17 @@ export default function Home() {
             </div>
             <div className="identity-bar">
               <p>
-                Giochi come <b>{author}</b>
-                {host
-                  ? " · Sei l’host"
-                  : " · Le tue proposte saranno approvate dall’host"}{" "}
-                · {room.members.length}/5 al tavolo
+                {spectator ? (
+                  "Stai assistendo alla partita"
+                ) : (
+                  <>
+                    Giochi come <b>{author}</b>
+                    {host
+                      ? " · Sei l’host"
+                      : " · Le tue proposte saranno approvate dall’host"}
+                  </>
+                )}{" "}
+                · {room.members.filter((member) => member.playerId).length}/5 al tavolo
               </p>
             </div>
             {room.roundCompleted && room.status === "active" && (
@@ -210,7 +212,7 @@ export default function Home() {
                   </p>
                   <button
                     className="primary full"
-                    disabled={busy || !online || room.status === "completed" || room.roundCompleted}
+                    disabled={busy || !online || spectator || room.status === "completed" || room.roundCompleted}
                     onClick={() => {
                       setMessage("");
                       setEditor("new");
@@ -218,7 +220,7 @@ export default function Home() {
                   >
                     ＋ Aggiungi mano
                   </button>
-                  {room.session.hands.length > 0 && (
+                  {!spectator && room.session.hands.length > 0 && (
                     <button
                       disabled={busy || !online}
                       className="text-button full undo"

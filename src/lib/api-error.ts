@@ -2,6 +2,7 @@ const messages: Record<string, string> = {
   UNAUTHORIZED: "Accedi per continuare.",
   FORBIDDEN: "Non fai parte di questa stanza. Usa il link di invito.",
   HOST_ONLY: "Solo l’host può approvare o modificare lo storico.",
+  SPECTATOR_ONLY: "Stai assistendo alla partita: solo i cinque giocatori al tavolo possono proporre mani.",
   CONFLICT: "La partita è stata aggiornata. Controlla i nuovi dati e riprova.",
   STALE_PROPOSAL:
     "La mano è cambiata: rifiuta la proposta e chiedine una nuova.",
