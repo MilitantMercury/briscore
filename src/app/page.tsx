@@ -5,7 +5,7 @@ import { Scoreboard } from "@/components/scoreboard";
 import { HandForm } from "@/components/hand-form";
 import { History } from "@/components/history";
 import { JoinRoom } from "@/components/join-room";
-import { RecentRooms } from "@/components/recent-rooms";
+import { AccountMenu } from "@/components/account-menu";
 import { useGame } from "@/components/use-game";
 import { calls, formatScore } from "@/lib/game";
 export default function Home() {
@@ -55,12 +55,7 @@ export default function Home() {
         </button>
         <div className="header-right">
           {userId && (
-            <RecentRooms onOpen={(id) => remember({ id })} />
-          )}
-          {userId && (
-            <button className="text-button" disabled={busy} onClick={signOut}>
-              Esci
-            </button>
+            <AccountMenu onOpen={(id) => remember({ id })} onSignOut={() => void signOut()} />
           )}
           {room ? (
             <>
