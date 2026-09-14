@@ -141,7 +141,7 @@ export default function Home() {
                 {host && <><button className="primary" onClick={() => void continueRound()}>Nuovo giro</button>{" "}<button className="secondary" onClick={() => void completeRoom()}>Concludi sessione</button></>}
               </section>
             )}
-            {room.status === "completed" && <section className="panel notice"><b>Sessione conclusa.</b> Risultato finale: {new Date(room.endedAt!).toLocaleString("it-IT")}.</section>}
+            {room.status === "completed" && <section className="panel notice"><b>Sessione conclusa.</b> Risultato finale: {new Date(room.endedAt!).toLocaleString("it-IT")} <a className="secondary" href={`/session/${room.id}`}>Vedi riepilogo →</a></section>}
             {!!room.proposals.length && (
               <a className="pending-banner" href="#requests">
                 {room.proposals.length}{" "}

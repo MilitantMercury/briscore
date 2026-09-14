@@ -20,6 +20,7 @@ export type Room = {
   currentRound: number;
   roundCompleted: boolean;
   endedAt?: string;
+  finalStandings?: { playerId: string; name: string; score: number }[];
 };
 export type RoomInvite = {
   id: string;
