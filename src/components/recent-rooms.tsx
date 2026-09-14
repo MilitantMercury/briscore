@@ -1,22 +1,37 @@
 "use client";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api-client";
+import { api, RequestError } from "@/lib/api-client";
 type RecentRoom = { id: string; created_at: string; updated_at: string };
 export function RecentRooms({ onOpen }: { onOpen: (id: string) => void }) {
   const [rooms, setRooms] = useState<RecentRoom[]>([]);
   const [error, setError] = useState("");
   useEffect(() => {
     let active = true;
-    api<RecentRoom[]>("/api/rooms")
-      .then((data) => {
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    const load = async (attempt = 0) => {
+      try {
+        const data = await api<RecentRoom[]>("/api/rooms");
         if (active) setRooms(data);
-      })
-      .catch(() => {
+      } catch (reason) {
+        // After an OAuth redirect, the browser can receive the session just after
+        // this component mounts. Retry the one transient unauthorized request.
+        if (
+          active &&
+          attempt === 0 &&
+          reason instanceof RequestError &&
+          reason.status === 401
+        ) {
+          retry = setTimeout(() => void load(1), 800);
+          return;
+        }
         if (active)
           setError("Non riesco a recuperare le tue partite. Riprova tra poco.");
-      });
+      }
+    };
+    void load();
     return () => {
       active = false;
+      clearTimeout(retry);
     };
   }, []);
   if (!rooms.length && !error) return null;
