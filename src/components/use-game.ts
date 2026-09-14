@@ -87,19 +87,20 @@ export function useGame() {
     const reference = id
       ? { id, inviteToken: params.get("invite") || undefined }
       : pending || saved;
-    if (reference && /^[a-f0-9-]{36}$/i.test(reference.id))
+    if (reference && /^[a-f0-9-]{36}$/i.test(reference.id)) {
       setCredentials(reference);
-      if (pending) {
-        try {
-          localStorage.removeItem(pendingRoomKey);
-        } catch {
-          /* Optional browser resume. */
-        }
-      }
-    else if (reference)
+    } else if (reference) {
       setMessage(
         "Questa è una vecchia partita locale. Crea una nuova stanza Supabase.",
       );
+    }
+    if (pending) {
+      try {
+        localStorage.removeItem(pendingRoomKey);
+      } catch {
+        /* Optional browser resume. */
+      }
+    }
     setReady(true);
   }, [userId]);
   useEffect(() => {
