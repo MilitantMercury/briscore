@@ -1,8 +1,58 @@
 begin;
+
 create or replace function public.briscore_leaderboard() returns jsonb
 language sql stable security definer set search_path = '' as $$
-  select coalesce(jsonb_agg(jsonb_build_object('userId',x.user_id,'name',x.name,'points',x.points,'games',x.games,'wins',x.wins) order by x.points desc,x.wins desc,x.name),'[]'::jsonb)
-  from (select m.user_id,p.name,sum((select coalesce(sum((case when h.caller_id=p.id then case when h.call_type='carichi' then 4 else 2 end when h.called_player_id=p.id then 1 else -1 end)*(case when h.caller_won then 1 else -1 end)*(case when h.call_type='normal' then 1 when h.call_type='double' then 2 when h.call_type='triple' then 3 else 1 end)*(case when h.capotto then 2 else 1 end)),0) from public.hands h where h.room_id=r.id)) points,count(distinct r.id) games,count(distinct r.id) filter (where (select coalesce(sum((case when h.caller_id=p.id then case when h.call_type='carichi' then 4 else 2 end when h.called_player_id=p.id then 1 else -1 end)*(case when h.caller_won then 1 else -1 end)*(case when h.call_type='normal' then 1 when h.call_type='double' then 2 when h.call_type='triple' then 3 else 1 end)*(case when h.capotto then 2 else 1 end)),0) from public.hands h where h.room_id=r.id))=(select max(z.score) from (select sum((case when h2.caller_id=p2.id then case when h2.call_type='carichi' then 4 else 2 end when h2.called_player_id=p2.id then 1 else -1 end)*(case when h2.caller_won then 1 else -1 end)*(case when h2.call_type='normal' then 1 when h2.call_type='double' then 2 when h2.call_type='triple' then 3 else 1 end)*(case when h2.capotto then 2 else 1 end)) score from public.players p2 left join public.hands h2 on h2.room_id=r.id and (h2.caller_id=p2.id or h2.called_player_id=p2.id) where p2.room_id=r.id group by p2.id) z)) wins from public.room_members m join public.players p on p.id=m.player_id join public.rooms r on r.id=m.room_id and r.status='completed' group by m.user_id,p.name) x;
+  with account as (
+    select briscore_private.require_account() as user_id
+  ),
+  session_scores as (
+    select
+      r.id as room_id,
+      m.user_id,
+      p.name,
+      coalesce(sum(
+        (case
+          when h.caller_id = p.id then case when h.call_type = 'carichi' then 4 else 2 end
+          when h.called_player_id = p.id then 1
+          else -1
+        end)
+        * (case when h.caller_won then 1 else -1 end)
+        * (case h.call_type when 'normal' then 1 when 'double' then 2 when 'triple' then 3 else 1 end)
+        * (case when h.capotto then 2 else 1 end)
+      ), 0)::bigint as points
+    from public.rooms r
+    cross join account
+    join public.room_members m on m.room_id = r.id
+    join public.players p on p.room_id = r.id and p.id = m.player_id
+    left join public.hands h on h.room_id = r.id
+    where r.status = 'completed'
+    group by r.id, m.user_id, p.id, p.name
+  ),
+  ranked_scores as (
+    select *, dense_rank() over (partition by room_id order by points desc) as place
+    from session_scores
+  ),
+  totals as (
+    select
+      user_id,
+      min(name) as name,
+      sum(points)::bigint as points,
+      count(*)::integer as games,
+      count(*) filter (where place = 1)::integer as wins
+    from ranked_scores
+    group by user_id
+  )
+  select coalesce(
+    jsonb_agg(
+      jsonb_build_object('userId', user_id, 'name', name, 'points', points, 'games', games, 'wins', wins)
+      order by points desc, wins desc, name
+    ),
+    '[]'::jsonb
+  )
+  from totals;
 $$;
+
+revoke execute on function public.briscore_leaderboard() from public, anon;
 grant execute on function public.briscore_leaderboard() to authenticated;
+
 commit;
