@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase-browser";
-import { FlameCrown } from "./flame-crown";
 const symbols: Record<string, string> = {
   bastoni: "♣",
   coppe: "♥",
@@ -43,7 +42,7 @@ export function PlayerAvatar({
   const badge = rank && rank <= 3 ? ["👑", "🥈", "🥉"][rank - 1] : null;
   return (
     <span className={`player-avatar avatar-${avatar} avatar-${size} ${imageUrl ? "has-image" : ""} ${effect ? `avatar-effect-${effect}` : ""}`} aria-label={`Avatar di ${name}`}>
-      {effect === "fire" && <FlameCrown />}
+      {effect === "fire" && <img className="flame-frame" src="/effects/flame-frame-v1.png" alt="" />}
       {effect === "water" && <span className="avatar-water" aria-hidden="true"><i /><i /></span>}
       {effect === "sparkles" && <span className="avatar-sparkles" aria-hidden="true"><i /><i /><i /><i /><i /></span>}
       {imageUrl ? <img src={imageUrl} alt="" /> : symbols[avatar] || name.slice(0, 1).toUpperCase()}
