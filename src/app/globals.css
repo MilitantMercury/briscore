@@ -1246,6 +1246,11 @@ body {
 .player-avatar::before, .player-avatar::after { position: absolute; font-size: 8px; line-height: 1; }
 .player-avatar::before { content: "BRIS"; top: 4px; left: 4px; }
 .player-avatar::after { content: "•"; bottom: 3px; right: 5px; }
+.player-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 6px; }
+.player-avatar.has-image { border-radius: 50%; border-color: #dfffb0; background: #0d1711; overflow: visible; }
+.player-avatar.has-image::before, .player-avatar.has-image::after { display: none; }
+.player-avatar.has-image img { border-radius: 50%; object-position: center; box-shadow: inset 0 0 0 1px #0004; }
+.player-avatar.has-image .rank-badge { right: -8px; top: -8px; }
 .avatar-coppe, .avatar-denari { color: #b63b38; }
 .avatar-sole { color: #c78e11; }
 .avatar-luna { color: #3f5f9d; }
