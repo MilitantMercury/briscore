@@ -1257,7 +1257,7 @@ body {
 .player-avatar > img { position:relative; z-index:1; }
 .avatar-water,.avatar-sparkles { position:absolute; pointer-events:none; z-index:2; inset:-24px; }
 .flame-crown { position:absolute; z-index:0; width:154%; height:calc(100% + 52px); left:-27%; bottom:-10px; filter:drop-shadow(0 -4px 10px #ff451bbb); transform-origin:50% 100%; animation:flame-sway .9s ease-in-out infinite alternate; }
-.effect-frame { max-width:none !important; position:absolute !important; z-index:0 !important; width:225% !important; height:225% !important; left:-62.5% !important; top:-62.5% !important; object-fit:contain !important; border-radius:0 !important; animation:effect-frame-float 1.6s ease-in-out infinite alternate; }
+.effect-frame { max-width:none !important; position:absolute !important; z-index:0 !important; width:166% !important; height:166% !important; left:-33% !important; top:-33% !important; object-fit:contain !important; border-radius:0 !important; animation:effect-frame-glimmer 2.8s ease-in-out infinite alternate; }
 .effect-frame-fire { filter:drop-shadow(0 0 10px #ff541faa); }.effect-frame-water { filter:drop-shadow(0 0 10px #28caffaa); animation-duration:2.2s; }.effect-frame-sparkles { filter:drop-shadow(0 0 9px #ffd45baa); animation-duration:1.9s; }
 .flame-crown .flame-inner { transform-origin:50% 100%; animation:flame-core .55s ease-in-out infinite alternate; }
 .avatar-water { z-index:0; inset:-17px; border-radius:48% 52% 48% 52%; background:conic-gradient(from 20deg,transparent 0 10%,#72efff 13%,#1179e7 20%,transparent 27% 43%,#88f8ff 47%,#198eea 55%,transparent 63% 78%,#5dd8ff 83%,transparent 90%); filter:drop-shadow(0 0 8px #32bfff); animation:water-orbit 2.3s linear infinite; }
@@ -1337,4 +1337,29 @@ body {
   .avatar-options { justify-content: center; }
   .leaderboard-row { gap: 9px; padding: 12px 9px; }
   .leaderboard-place { width: 20px; font-size: 14px; }
+}
+
+/* Reserve real layout space for the cosmetic, including its glow. */
+.avatar-stage { display:inline-grid; place-items:center; flex:none; vertical-align:middle; }
+.avatar-stage-normal { width:80px; height:94px; }
+.avatar-stage-small { width:44px; height:49px; }
+.avatar-stage-large { width:124px; height:150px; }
+.avatar-stage .rank-badge { z-index:3; top:-19px; right:-15px; }
+.avatar-stage .player-avatar.has-image .rank-badge { top:-19px; right:-15px; }
+.player-card .avatar-stage { max-width:100%; }
+.player-card .player-avatar { margin-top:0; }
+.player-card-name { min-height:35px; }
+.avatar-picker { grid-template-columns:180px minmax(0,1fr); gap:28px; align-items:start; }
+.avatar-preview { width:100%; padding:16px 12px; gap:12px; background:linear-gradient(145deg,#f7f1df,#ded6bf); color:#17211d; border-radius:16px; box-shadow:0 8px 24px #0003; }
+.avatar-preview > b { width:100%; line-height:1.3; }
+.avatar-picker fieldset { min-width:0; padding-top:12px; }
+.avatar-upload { display:grid; gap:8px; margin-top:18px; }
+.avatar-upload input { width:100%; min-width:0; font-size:13px; }
+@keyframes effect-frame-glimmer { from { opacity:.82; } to { opacity:1; } }
+@media (max-width:700px) {
+  .avatar-picker { grid-template-columns:1fr; }
+  .avatar-preview { max-width:200px; justify-self:center; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .effect-frame,.table-glow,.player-card { animation:none !important; }
 }
