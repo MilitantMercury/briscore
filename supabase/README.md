@@ -19,11 +19,13 @@ La prima migrazione crea le tabelle originarie. La seconda aggiunge inviti, asso
 - `briscore_invite`: anteprima dei soli posti, per account autenticato con invito valido.
 - `briscore_join_room`: occupa un posto libero sotto lock sulla stanza; massimo cinque account.
 - `briscore_get_room`: snapshot completa riservata ai membri.
-- `briscore_mutate`: aggiunta, modifica, eliminazione, reset, proposta e approvazione/rifiuto; lock e revisione in una sola transazione. Massimo 30 proposte pendenti per stanza.
+- `briscore_mutate`: aggiunta, modifica, eliminazione, reset, proposta, approvazione/rifiuto, nuovo giro e conclusione sessione; lock e revisione in una sola transazione. Dopo cinque mani il giro è bloccato. Massimo 30 proposte pendenti per stanza.
 
 Le tabelle sono leggibili solo dai membri tramite RLS. Le scritture dirette sono revocate, anche all'host: si usano le RPC. Le funzioni interne sono in `briscore_private`, con execute revocato; solo il controllo RLS di appartenenza è eseguibile dagli account. Tutte le funzioni SECURITY DEFINER hanno search_path vuoto e controlli espliciti di identità/appartenenza.
 
-La tabella `hands` conserva gli input, non i punteggi derivati. I vincoli impediscono un chiamato in Carichi, ruoli uguali, giocatori di altre stanze e capotto in sconfitta. Gli ID degli account rimangono nelle membership; nomi e punteggi non autorizzano alcuna operazione.
+La tabella `hands` conserva gli input, non i punteggi derivati. I vincoli impediscono un chiamato in Carichi, ruoli uguali e giocatori di altre stanze. Il capotto è valido in entrambi gli esiti e raddoppia i delta. Gli ID degli account rimangono nelle membership; nomi e punteggi non autorizzano alcuna operazione.
+
+La pipeline `.github/workflows/supabase-and-checks.yml` applica automaticamente le migrazioni al progetto `aauikdqmbdddnvfyrnhg` dopo i controlli di qualità. I secret sono configurati nell'environment GitHub `production` e non devono mai essere committati.
 
 La pubblicazione Realtime comprende `rooms`: ogni transazione aggiorna la revisione una sola volta. I client iscritti con JWT ricevono solo gli UPDATE autorizzati e ricaricano la snapshot completa. Non si diffondono eventi DELETE delle singole mani.
 

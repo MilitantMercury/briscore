@@ -37,13 +37,19 @@ Aprire http://localhost:3000. Per produzione: `npm run build`, poi `npm start`. 
 | 80+              |        +6 |       +3 |    −3 |
 | Carichi, da solo |        +4 |        — |    −1 |
 
-Sconfitta: segni invertiti. Capotto: solo in vittoria, raddoppia tutti i delta, anche per Carichi. La somma è sempre zero. I risultati e la classifica sono derivati dalle mani e non vengono salvati come totali modificabili.
+Sconfitta: segni invertiti. Il capotto raddoppia tutti i delta sia quando vince il chiamante sia quando perde, anche per Carichi. La somma è sempre zero. I risultati e la classifica sono derivati dalle mani e non vengono salvati come totali modificabili.
+
+## Giri e conclusione
+
+Una sessione è organizzata in giri da cinque mani, così ogni giocatore può fare le carte. Dopo la quinta mano il giro viene bloccato: l'host può avviare un nuovo giro oppure concludere definitivamente la sessione. Una sessione conclusa non accetta più modifiche; solo le sessioni concluse potranno alimentare la classifica globale.
 
 ## Database e sicurezza
 
 `src/lib/rooms.ts` chiama le RPC Supabase con il JWT dell'utente verificato dal server. Non usa file JSON, service-role key o mutex in memoria. Il database valida autonomamente ruoli, partecipanti, chiamata e capotto anche se qualcuno chiama una RPC senza passare da Next.js.
 
 Migrazioni e istruzioni: [supabase/README.md](supabase/README.md). Le vecchie partite in `.briscore-data` sono preservate sul disco e ignorate da Git, ma non vengono importate automaticamente: mancavano le identità account necessarie per attribuirle correttamente. La nuova app usa solo Supabase. localStorage conserva soltanto sessione Auth e riferimento all'ultima stanza per account.
+
+Il deploy su Vercel parte dai push su `main`. La pipeline GitHub Actions esegue i controlli e applica le migrazioni Supabase in ambiente `production`; richiede i secret `SUPABASE_ACCESS_TOKEN` e `SUPABASE_DB_PASSWORD`.
 
 ## Verifiche
 
