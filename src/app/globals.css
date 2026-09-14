@@ -1344,8 +1344,8 @@ body {
 .avatar-stage-normal { width:80px; height:94px; }
 .avatar-stage-small { width:44px; height:49px; }
 .avatar-stage-large { width:124px; height:150px; }
-.avatar-stage .rank-badge { z-index:3; top:-32px; left:50%; right:auto; transform:translateX(-50%); font-size:26px; line-height:1; }
-.avatar-stage .player-avatar.has-image .rank-badge { top:-32px; left:50%; right:auto; }
+.avatar-stage .rank-badge { z-index:4; top:-78px; left:50%; right:auto; transform:translateX(-50%); font-size:36px; line-height:1; filter:drop-shadow(0 3px 3px #0009); }
+.avatar-stage .player-avatar.has-image .rank-badge { top:-78px; left:50%; right:auto; }
 .player-card .avatar-stage { max-width:100%; }
 .player-card .player-avatar { margin-top:0; }
 .player-card-name { min-height:35px; }
