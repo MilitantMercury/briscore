@@ -12,6 +12,7 @@ import { supabase } from "@/lib/supabase-browser";
 import { api, RequestError } from "@/lib/api-client";
 
 const storageKey = "briscore-room-v2:";
+const pendingRoomKey = "briscore-pending-room";
 export function useGame() {
   const [room, setRoom] = useState<Room | null>(null);
   const [credentials, setCredentials] = useState<RoomReference | null>(null);
@@ -78,11 +79,24 @@ export function useGame() {
     }
     const params = new URLSearchParams(window.location.search);
     const id = params.get("room");
+    let pending: RoomReference | null = null;
+    try {
+      pending = JSON.parse(localStorage.getItem(pendingRoomKey) || "null");
+    } catch {
+      /* Resume is optional. */
+    }
     const reference = id
       ? { id, inviteToken: params.get("invite") || undefined }
-      : saved;
+      : pending || saved;
     if (reference && /^[a-f0-9-]{36}$/i.test(reference.id))
       setCredentials(reference);
+      if (pending) {
+        try {
+          localStorage.removeItem(pendingRoomKey);
+        } catch {
+          /* Optional browser resume. */
+        }
+      }
     else if (reference)
       setMessage(
         "Questa è una vecchia partita locale. Crea una nuova stanza Supabase.",

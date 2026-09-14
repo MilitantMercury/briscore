@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase-browser";
+const pendingRoomKey = "briscore-pending-room";
 export function AuthPanel() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -33,10 +34,24 @@ export function AuthPanel() {
       window.location.origin + window.location.pathname + window.location.search
     );
   }
+  function rememberRoomBeforeRedirect() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("room");
+    if (!id) return;
+    try {
+      localStorage.setItem(
+        pendingRoomKey,
+        JSON.stringify({ id, inviteToken: params.get("invite") || undefined }),
+      );
+    } catch {
+      /* The URL remains the fallback when storage is unavailable. */
+    }
+  }
   async function oauth(provider: "google" | "apple") {
     setBusy(true);
     setMessage("");
     try {
+      rememberRoomBeforeRedirect();
       const { error } = await supabase.auth.signInWithOAuth({
         provider,
         options: { redirectTo: redirectTo() },
@@ -53,6 +68,7 @@ export function AuthPanel() {
     setBusy(true);
     setMessage("");
     try {
+      rememberRoomBeforeRedirect();
       const { error } = await supabase.auth.signInWithOtp({
         email: email.trim(),
         options: { emailRedirectTo: redirectTo() },
