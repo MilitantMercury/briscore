@@ -1555,6 +1555,50 @@ footer::before { content:"DENARI · COPPE · SPADE · BASTONI"; position:absolut
 .session-cancel { border-color:#e47c743d; color:#dc8b83; font-weight:700; }
 .session-cancel:hover:not(:disabled) { border-color:#ed8b83aa; background:#55231f88; color:#ffd2cd; }
 
+/* Hand history: a compact stack, with only the selected card dealt open. */
+.history-list { display:grid; gap:10px; }
+.history-list.reverse { display:grid; }
+.history-hand { min-height:0 !important; padding:0; transition:border-color .22s ease, background .22s ease, transform .22s ease, box-shadow .22s ease; }
+.history-hand.is-collapsed { background:linear-gradient(100deg,#16271cd9,#101c15dd); box-shadow:0 6px 15px #0003; }
+.history-hand.is-collapsed:hover { transform:translateX(5px); border-color:#e3c66b6b; background:#203523e8; }
+.history-hand.is-expanded { padding:0 18px 16px; border-color:#d9bd606b; background:linear-gradient(130deg,#203924f2,#112218f2); box-shadow:0 16px 34px #0008, inset 0 0 0 1px #f6dc8512; }
+.history-toggle {
+  position:relative;
+  z-index:2;
+  width:100%;
+  min-height:58px;
+  display:grid;
+  grid-template-columns:94px minmax(0,1fr) auto 24px;
+  align-items:center;
+  gap:12px;
+  padding:11px 17px;
+  border-radius:13px;
+  background:transparent;
+  color:var(--text);
+  text-align:left;
+}
+.is-expanded .history-toggle { margin:0 -18px 12px; width:calc(100% + 36px); border-bottom:1px solid #f2dfa52b; border-radius:13px 13px 0 0; background:#0d1b13a8; }
+.history-toggle:hover:not(:disabled) { background:#f6e4a00a; }
+.history-toggle .hand-number { color:#b9c5ac; font-size:12px; font-weight:700; }
+.hand-summary { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; color:#dce5d4; font-size:13px; }
+.hand-summary b { color:#fffdf4; }
+.history-toggle .result-tag { justify-self:end; font-size:11px; white-space:nowrap; }
+.history-chevron { display:grid; place-items:center; width:22px; height:22px; border:1px solid #e9d4864b; border-radius:50%; color:#ead37b; font-size:16px; line-height:1; }
+.history-hand .hand-suit { z-index:3; top:6px; right:12px; opacity:.75; pointer-events:none; }
+.history-hand.is-expanded .hand-suit { display:none; }
+.hand-detail { position:relative; z-index:2; animation:hand-dealt .26s ease both; }
+.hand-detail .point-grid { margin:0; padding:3px 0 7px; }
+.hand-detail .hand-actions { margin:10px 0 0; }
+@keyframes hand-dealt { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+@media (max-width:700px) {
+  .history-hand.is-expanded { padding:0 13px 13px; }
+  .history-toggle { grid-template-columns:58px minmax(0,1fr) 21px; gap:8px; padding:10px 12px; min-height:55px; }
+  .history-toggle .result-tag { display:none; }
+  .is-expanded .history-toggle { margin:0 -13px 10px; width:calc(100% + 26px); }
+  .hand-summary { font-size:12px; }
+  .hand-detail .point-grid { grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px; }
+}
+
 /* The game is a scene first: the table leads, the controls follow the dealer. */
 .game-hud {
   min-height: 0;
