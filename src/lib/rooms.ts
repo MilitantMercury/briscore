@@ -88,6 +88,9 @@ export async function mutateRoom(
     }),
   );
 }
+export async function cancelRoom(auth: AuthContext, id: string, revision: number) {
+  return hydrate(await rpc(auth, "briscore_cancel_room", { p_room: id, p_revision: revision }));
+}
 export async function listRooms(auth: AuthContext) {
   const { data, error } = await auth.client
     .from("rooms")

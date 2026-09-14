@@ -251,6 +251,9 @@ export function useGame() {
   async function completeRoom() {
     await run(async () => acceptRoom(await api<Room>(`/api/rooms/${room!.id}`, { method: "PUT", body: JSON.stringify({ revision: room!.revision, action: "complete" }) })));
   }
+  async function cancelRoom() {
+    await run(async () => acceptRoom(await api<Room>(`/api/rooms/${room!.id}`, { method: "PUT", body: JSON.stringify({ revision: room!.revision, action: "cancel" }) })));
+  }
   function leave() {
     if (
       room &&
@@ -326,6 +329,7 @@ export function useGame() {
     resetRoom,
     continueRound,
     completeRoom,
+    cancelRoom,
     leave,
     signOut,
     share,

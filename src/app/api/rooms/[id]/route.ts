@@ -1,6 +1,6 @@
 import { requireUser } from "@/lib/auth-server";
 import { apiError, readBody } from "@/lib/api-error";
-import { getRoom, mutateRoom } from "@/lib/rooms";
+import { cancelRoom, getRoom, mutateRoom } from "@/lib/rooms";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 type Context = { params: Promise<{ id: string }> };
@@ -19,7 +19,9 @@ export async function PUT(request: Request, context: Context) {
     const auth = await requireUser(request);
     const body = await readBody(request);
     return Response.json(
-      await mutateRoom(
+      body.action === "cancel"
+        ? await cancelRoom(auth, (await context.params).id, body.revision as number)
+        : await mutateRoom(
         auth,
         (await context.params).id,
         body.revision as number,

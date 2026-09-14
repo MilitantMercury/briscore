@@ -35,6 +35,7 @@ export default function Home() {
     resetRoom,
     continueRound,
     completeRoom,
+    cancelRoom,
     leave,
     signOut,
     share,
@@ -144,6 +145,7 @@ export default function Home() {
               </section>
             )}
             {room.status === "completed" && <section className="panel notice"><b>Sessione conclusa.</b> Risultato finale: {new Date(room.endedAt!).toLocaleString("it-IT")} <a className="secondary" href={`/session/${room.id}`}>Vedi riepilogo →</a></section>}
+            {room.status === "cancelled" && <section className="panel notice"><b>Partita annullata dall’host.</b> Questa sessione non conta per la classifica.</section>}
             {!!room.proposals.length && (
               <a className="pending-banner" href="#requests">
                 {room.proposals.length}{" "}
@@ -212,7 +214,7 @@ export default function Home() {
                   </p>
                   <button
                     className="primary full"
-                    disabled={busy || !online || spectator || room.status === "completed" || room.roundCompleted}
+                    disabled={busy || !online || spectator || room.status !== "active" || room.roundCompleted}
                     onClick={() => {
                       setMessage("");
                       setEditor("new");
@@ -348,6 +350,11 @@ export default function Home() {
                     }}
                   >
                     Reset sessione
+                  </button>
+                )}
+                {host && room.status === "active" && (
+                  <button disabled={busy || !online} className="text-button danger" onClick={() => { if (window.confirm("Annullare questa partita? I punteggi non verranno conteggiati in classifica.")) void cancelRoom(); }}>
+                    Annulla partita
                   </button>
                 )}
               </div>
