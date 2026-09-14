@@ -55,6 +55,9 @@ export default function Home() {
         </button>
         <div className="header-right">
           {userId && (
+            <RecentRooms onOpen={(id) => remember({ id })} />
+          )}
+          {userId && (
             <button className="text-button" disabled={busy} onClick={signOut}>
               Esci
             </button>
@@ -106,7 +109,6 @@ export default function Home() {
           </section>
         ) : !room ? (
           <>
-            <RecentRooms onOpen={(id) => remember({ id })} />
             <NewSession busy={busy} onStart={start} />
           </>
         ) : (
