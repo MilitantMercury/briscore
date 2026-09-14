@@ -68,7 +68,8 @@
 }
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  background: #07110d;
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
@@ -1201,30 +1202,50 @@ select {
   --bronze: #d49a6b;
 }
 body {
+  position: relative;
+  isolation: isolate;
+  overflow-x: clip;
   background:
-    radial-gradient(circle at 18% 0%, #203c2d 0, transparent 28rem),
-    radial-gradient(circle at 95% 20%, #192f26 0, transparent 32rem),
+    linear-gradient(90deg, #05100be8 0%, #06130d9c 43%, #05100be5 100%),
+    linear-gradient(180deg, #05100c42 0%, #05100ce8 94%),
+    url("/backgrounds/briscola-aurora.png") center / cover fixed,
     var(--felt);
+  animation: briscola-backdrop-drift 36s ease-in-out infinite alternate;
 }
 body::before,
 body::after {
+  content: "";
   position: fixed;
+  inset: -25%;
   z-index: -1;
   pointer-events: none;
-  color: #c9d9a40a;
-  font-family: Georgia, serif;
-  font-weight: 700;
-  letter-spacing: .14em;
-  line-height: .78;
-  white-space: pre;
 }
-body::before { content: "DENARI\\A COPPE"; top: 23%; left: max(14px, calc(50% - 760px)); font-size: clamp(42px, 7vw, 94px); transform: rotate(-15deg); }
-body::after { content: "SPADE\\A BASTONI"; right: max(14px, calc(50% - 760px)); bottom: 12%; font-size: clamp(38px, 6vw, 82px); text-align: right; transform: rotate(15deg); }
+body::before {
+  background:
+    radial-gradient(ellipse at 15% 35%, #d8ff8e18 0 2%, transparent 21%),
+    radial-gradient(ellipse at 80% 62%, #f9c65c18 0 1.5%, transparent 18%),
+    conic-gradient(from 215deg at 50% 50%, transparent 0 18%, #c4ff7f11 24%, transparent 31% 62%, #ffd66b0d 69%, transparent 78%);
+  mix-blend-mode: screen;
+  filter: blur(11px);
+  animation: briscola-light-sweep 16s ease-in-out infinite alternate;
+}
+body::after {
+  opacity: .65;
+  background-image:
+    radial-gradient(circle, #ffe6a5d9 0 1px, transparent 1.6px),
+    radial-gradient(circle, #d9ff9db8 0 1px, transparent 1.5px),
+    radial-gradient(circle, #f7c55e99 0 1.4px, transparent 2px);
+  background-size: 103px 131px, 149px 173px, 197px 227px;
+  background-position: 0 0, 30px 57px, 73px 18px;
+  mask-image: radial-gradient(ellipse at center, #000 0%, transparent 71%);
+  animation: briscola-particles 19s linear infinite;
+}
 .topbar { border-color: #ffffff1a; }
 .panel, .card-surface {
-  background: linear-gradient(145deg, #1b2a21, #142019);
-  border-color: #ffffff1f;
-  box-shadow: 0 18px 50px #02090755;
+  background: linear-gradient(145deg, #193023e8, #0d1c15e8);
+  border-color: #e8d79a2e;
+  box-shadow: inset 0 1px #fff4c112, 0 18px 50px #02090777;
+  backdrop-filter: blur(10px);
 }
 .card-surface { position: relative; overflow: hidden; }
 .card-surface::after {
@@ -1412,7 +1433,7 @@ footer::before { content:"DENARI · COPPE · SPADE · BASTONI"; position:absolut
   border: 1px solid #e6ffc436;
   border-radius: 28px;
   background:
-    radial-gradient(ellipse at 50% 45%, #2d5738 0%, #183526 48%, #10251b 100%);
+    radial-gradient(ellipse at 50% 45%, #356440e8 0%, #183526ed 48%, #0b1c14f2 100%);
   box-shadow: inset 0 0 0 10px #06110c33, inset 0 0 85px #000b, 0 26px 70px #0008;
 }
 .table-glow { position:absolute; inset:-35%; background:conic-gradient(from 30deg, transparent, #dbff9a14, transparent 32%); animation: table-sheen 12s linear infinite; pointer-events:none; }
@@ -1436,6 +1457,18 @@ footer::before { content:"DENARI · COPPE · SPADE · BASTONI"; position:absolut
 .table-mantra { text-align:center; margin:23px 0 0; font-size:11px; letter-spacing:1.1px; color:#c8d7c5; text-transform:uppercase; }.table-mantra span{color:var(--lime); margin:0 9px;}
 @keyframes deal-in { from { opacity:0; transform:translateY(24px) rotate(2deg); } to { opacity:1; transform:translateY(0) rotate(0); } }
 @keyframes table-sheen { to { transform:rotate(1turn); } }
+@keyframes briscola-backdrop-drift {
+  from { background-position: center, center, 46% 50%, center; }
+  to { background-position: center, center, 54% 46%, center; }
+}
+@keyframes briscola-light-sweep {
+  from { transform: translate3d(-5%, -2%, 0) rotate(-8deg) scale(1); opacity: .55; }
+  to { transform: translate3d(6%, 4%, 0) rotate(12deg) scale(1.12); opacity: 1; }
+}
+@keyframes briscola-particles {
+  from { transform: translate3d(0, 0, 0) rotate(0); }
+  to { transform: translate3d(-34px, 48px, 0) rotate(2deg); }
+}
 @media (max-width: 900px) { .player-cards { grid-template-columns:repeat(3, minmax(0,1fr)); }.player-card { min-height:168px; }.live-table { padding:22px; } }
 @media (max-width: 540px) { .game-hero { padding-top:30px; }.live-table { margin:0 -4px; padding:18px 12px; border-radius:20px; }.table-heading h2 { font-size:23px; }.player-cards { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; padding:4px 2px 10px; }.player-card { flex:0 0 132px; scroll-snap-align:start; min-height:174px; }.player-card .player-avatar.has-image.avatar-large { width:62px; height:74px; }.table-mantra { font-size:9px; letter-spacing:.6px; } }
 @media (max-width: 700px) {
@@ -1468,7 +1501,8 @@ footer::before { content:"DENARI · COPPE · SPADE · BASTONI"; position:absolut
   .avatar-preview { max-width:200px; justify-self:center; }
 }
 @media (prefers-reduced-motion:reduce) {
-  .effect-frame,.table-glow,.player-card { animation:none !important; }
+  body,.effect-frame,.table-glow,.player-card { animation:none !important; }
+  body::before,body::after { animation:none !important; }
 }
 /* Give flames a taller silhouette above the portrait. */
 .effect-frame.effect-frame-fire {
