@@ -702,6 +702,19 @@ footer > span:last-child {
   color: var(--text);
   font-size: 23px;
 }
+.notice.panel {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-right: 16px;
+}
+.notice.panel > button {
+  position: static;
+  width: auto;
+  font-size: 14px;
+  padding: 0 16px;
+}
 .session-actions {
   display: flex;
   justify-content: space-between;
