@@ -103,7 +103,7 @@ export default function Home() {
           </>
         ) : (
           <>
-            <div className="game-heading game-hero briscola-hero">
+            <div className="game-heading game-hero briscola-hero game-hud">
               <div>
                 <span className="eyebrow">
                   PARTITA DEL{" "}
@@ -114,9 +114,7 @@ export default function Home() {
                     })
                     .toUpperCase()}
                 </span>
-                <h1>
-                  Il vostro tavolo<span className="lime">.</span>
-                </h1>
+                <h1>Partita in corso<span className="lime">.</span></h1>
               </div>
               <button className="secondary" onClick={share}>
                 ↗ Invita giocatori
@@ -154,9 +152,42 @@ export default function Home() {
                 {host ? "· Controlla e approva →" : "· Da approvare"}
               </a>
             )}
-            <div className="game-grid">
+            <section className="table-stage">
+              <Scoreboard session={room.session} members={room.members} />
+              <section className="panel action-panel dealer-card dealer-strip">
+                <div className="dealer-copy">
+                  <span className="eyebrow">IL MAZZIERE È PRONTO</span>
+                  <h2>Com’è andata?</h2>
+                  <p>Registra la mano: il tavolo si aggiorna per tutti.</p>
+                </div>
+                <div className="dealer-actions">
+                  <button
+                    className="primary"
+                    disabled={busy || !online || spectator || room.status !== "active" || room.roundCompleted}
+                    onClick={() => {
+                      setMessage("");
+                      setEditor("new");
+                    }}
+                  >
+                    ＋ Aggiungi mano
+                  </button>
+                  {!spectator && room.session.hands.length > 0 && (
+                    <button
+                      disabled={busy || !online}
+                      className="text-button undo"
+                      onClick={() => {
+                        if (window.confirm("Annullare l’ultima mano?"))
+                          void change("delete", room.session.hands.at(-1)!);
+                      }}
+                    >
+                      ↶ {host ? "Annulla ultima mano" : "Proponi annullamento"}
+                    </button>
+                  )}
+                </div>
+              </section>
+            </section>
+            <div className="after-table-grid">
               <div>
-                <Scoreboard session={room.session} members={room.members} />
                 <section className="history-section briscola-history">
                   <div className="section-heading">
                     <h2>
@@ -203,40 +234,6 @@ export default function Home() {
                 </section>
               </div>
               <aside>
-                <section className="panel action-panel dealer-card">
-                  <span className="eyebrow">PRONTI PER LA PROSSIMA?</span>
-                  <h2>Com’è andata?</h2>
-                  <p>
-                    Una mano, pochi tocchi.
-                    <br />
-                    Il punteggio si aggiorna per tutti.
-                  </p>
-                  <button
-                    className="primary full"
-                    disabled={busy || !online || spectator || room.status !== "active" || room.roundCompleted}
-                    onClick={() => {
-                      setMessage("");
-                      setEditor("new");
-                    }}
-                  >
-                    ＋ Aggiungi mano
-                  </button>
-                  {!spectator && room.session.hands.length > 0 && (
-                    <button
-                      disabled={busy || !online}
-                      className="text-button full undo"
-                      onClick={() => {
-                        if (window.confirm("Annullare l’ultima mano?"))
-                          void change("delete", room.session.hands.at(-1)!);
-                      }}
-                    >
-                      ↶{" "}
-                      {host
-                        ? "Annulla ultima mano"
-                        : "Proponi annullamento ultima mano"}
-                    </button>
-                  )}
-                </section>
                 <section className="rules-card briscola-rules">
                   <span className="eyebrow">UN RIPASSO AL VOLO</span>
                   <h3>Ogni chiamata ha il suo peso.</h3>

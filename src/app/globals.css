@@ -1511,3 +1511,68 @@ footer::before { content:"DENARI · COPPE · SPADE · BASTONI"; position:absolut
   left:-45% !important;
   top:-55% !important;
 }
+
+/* The game is a scene first: the table leads, the controls follow the dealer. */
+.game-hud {
+  min-height: 0;
+  margin-top: 20px;
+  padding: 20px 26px 18px;
+  border-radius: 18px 18px 10px 10px;
+}
+.game-hud h1 { font-size: clamp(27px, 3.2vw, 42px); letter-spacing: -2px; }
+.game-hud::before { right: 18px; bottom: -18px; font-size: clamp(55px, 9vw, 104px); }
+.game-hud::after { top: 11px; right: 20px; font-size: 8px; }
+.game-hud .secondary { min-height: 40px; }
+.table-stage { position: relative; margin-top: 6px; }
+.table-stage .live-table { min-height: 402px; padding: 37px 42px 86px; }
+.table-stage .player-cards { gap: 17px; }
+.table-stage .player-card { min-height: 240px; padding: 18px 12px 15px; border-radius: 20px; }
+.table-stage .player-card-name b { font-size: 16px; }
+.table-stage .player-card strong { font-size: 37px; }
+.dealer-strip {
+  position: relative;
+  z-index: 3;
+  width: min(860px, calc(100% - 72px));
+  min-height: 102px;
+  margin: -52px auto 0;
+  padding: 19px 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border: 1px solid #f1d77c72;
+  border-radius: 17px;
+  background: linear-gradient(110deg, #2a3d25f4, #172a1cf6 56%, #334322f4);
+  box-shadow: 0 18px 42px #000a, inset 0 1px #fff5c12b;
+  backdrop-filter: blur(14px);
+}
+.dealer-strip::after { right: 7px; bottom: -19px; font-size: 72px; }
+.dealer-copy { position: relative; z-index: 1; }
+.dealer-copy h2 { margin: 2px 0 0; font-size: 25px; }
+.dealer-copy p { margin: 2px 0 0; color: #bec9ad; font-size: 13px; }
+.dealer-actions { position:relative; z-index:1; display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:flex-end; }
+.dealer-actions .primary { min-width: 190px; }
+.dealer-actions .undo { min-height: 34px; padding: 5px; color: #d4dfc5; }
+.after-table-grid { display:grid; grid-template-columns:minmax(0, 1.75fr) minmax(270px, .75fr); gap:28px; align-items:start; margin-top: 25px; }
+.after-table-grid .history-section { margin-top: 0; }
+.after-table-grid .rules-card { position: sticky; top: 22px; }
+.after-table-grid .history-hand { min-height: 155px; }
+.after-table-grid .history-hand:first-child { border-color:#d6b85a66; box-shadow:0 15px 34px #0007, inset 0 0 0 1px #f9e29510; }
+@media (max-width: 900px) {
+  .table-stage .live-table { padding: 28px 25px 78px; }
+  .table-stage .player-cards { gap: 10px; }
+  .dealer-strip { width: calc(100% - 36px); }
+  .after-table-grid { grid-template-columns:minmax(0,1.3fr) minmax(230px,.7fr); gap:20px; }
+}
+@media (max-width: 700px) {
+  .game-hud { padding: 17px 16px; margin-top: 10px; }
+  .game-hud h1 { font-size: 27px; }.game-hud::before { display:none; }.game-hud::after { display:none; }
+  .briscola-ribbon { margin: -1px 8px 18px; padding: 10px 13px; }
+  .table-stage .live-table { margin:0 -4px; padding: 22px 12px 72px; min-height:0; }
+  .table-stage .player-cards { gap:10px; }
+  .table-stage .player-card { min-height: 185px; }
+  .dealer-strip.action-panel { position:relative; inset:auto; width:calc(100% - 20px); margin:-43px auto 0; padding:15px 16px; border-radius:15px; display:block; background:linear-gradient(110deg,#2a3d25fa,#172a1cfa); }
+  .dealer-copy h2 { font-size:21px; }.dealer-copy p { display:block; font-size:12px; }
+  .dealer-actions { margin-top:11px; display:flex; align-items:center; justify-content:space-between; }.dealer-actions .primary { min-width:0; flex:1; }.dealer-actions .undo { font-size:11px; }
+  .after-table-grid { display:flex; flex-direction:column; margin-top:26px; }.after-table-grid > * { width:100%; }.after-table-grid .rules-card { position:static; order:2; }.after-table-grid .history-section { order:1; }
+}
