@@ -155,7 +155,7 @@ export default function Home() {
             )}
             <div className="game-grid">
               <div>
-                <Scoreboard session={room.session} />
+                <Scoreboard session={room.session} members={room.members} />
                 <section className="history-section">
                   <div className="section-heading">
                     <h2>

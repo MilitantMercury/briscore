@@ -14,7 +14,7 @@ export type Room = {
   session: Session;
   updatedAt: string;
   inviteToken?: string;
-  members: { userId: string; playerId: string | null }[];
+  members: { userId: string; playerId: string | null; avatar?: string; globalRank?: number }[];
   proposals: Proposal[];
   status: "active" | "completed";
   currentRound: number;

@@ -1189,3 +1189,91 @@ select {
 .proposals {
   scroll-margin-top: 20px;
 }
+
+/* Card-table visual system */
+:root {
+  --felt: #0c1713;
+  --felt-light: #14251d;
+  --paper: #f7f1df;
+  --ink: #17211d;
+  --gold: #f4c76e;
+  --silver: #c8d2d5;
+  --bronze: #d49a6b;
+}
+body {
+  background:
+    radial-gradient(circle at 18% 0%, #203c2d 0, transparent 28rem),
+    radial-gradient(circle at 95% 20%, #192f26 0, transparent 32rem),
+    var(--felt);
+}
+.topbar { border-color: #ffffff1a; }
+.panel, .card-surface {
+  background: linear-gradient(145deg, #1b2a21, #142019);
+  border-color: #ffffff1f;
+  box-shadow: 0 18px 50px #02090755;
+}
+.card-surface { position: relative; overflow: hidden; }
+.card-surface::after {
+  content: "♠ ♥ ♦ ♣";
+  position: absolute;
+  right: -12px;
+  top: -28px;
+  color: #ffffff08;
+  font-size: 8rem;
+  letter-spacing: 12px;
+  pointer-events: none;
+}
+.primary { background: linear-gradient(135deg, #d9ff95, var(--lime)); box-shadow: 0 8px 22px #bdf58024; }
+.primary:not(:disabled):hover { background: #e5ffb7; transform: translateY(-1px); }
+.score-row { border-radius: 13px; margin: 5px 0; border-top-color: transparent; }
+.score-row.leader { background: linear-gradient(90deg, #425d2a, #23351d); box-shadow: inset 3px 0 var(--gold); }
+.player-avatar {
+  position: relative;
+  width: 42px;
+  height: 48px;
+  flex: 0 0 auto;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 2px solid #fffdf4;
+  box-shadow: 0 5px 12px #0005;
+  font-size: 25px;
+  font-family: Georgia, serif;
+  font-weight: 800;
+}
+.player-avatar::before, .player-avatar::after { position: absolute; font-size: 8px; line-height: 1; }
+.player-avatar::before { content: "BRIS"; top: 4px; left: 4px; }
+.player-avatar::after { content: "•"; bottom: 3px; right: 5px; }
+.avatar-coppe, .avatar-denari { color: #b63b38; }
+.avatar-sole { color: #c78e11; }
+.avatar-luna { color: #3f5f9d; }
+.avatar-stella { color: #7655a7; }
+.avatar-small { width: 34px; height: 39px; font-size: 19px; }
+.avatar-large { width: 68px; height: 79px; font-size: 42px; }
+.rank-badge { position: absolute; right: -9px; top: -11px; font-style: normal; font-size: 17px; z-index: 1; filter: drop-shadow(0 2px 2px #0008); }
+.rank-1 { color: var(--gold); }
+.rank-2 { color: var(--silver); }
+.rank-3 { color: var(--bronze); }
+.avatar-picker { display: grid; grid-template-columns: 112px 1fr; align-items: center; gap: 22px; padding: 18px; border: 1px solid #ffffff19; border-radius: 14px; background: #09140f66; }
+.avatar-preview { display: grid; justify-items: center; gap: 8px; text-align: center; font-size: 13px; overflow-wrap: anywhere; }
+.avatar-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.avatar-choice { padding: 3px; border-radius: 10px; background: transparent; border: 1px solid transparent; min-height: auto; }
+.avatar-choice:hover, .avatar-choice.selected { border-color: var(--lime); background: #d9ff9512; }
+.avatar-choice .player-avatar { pointer-events: none; }
+.leaderboard-row { gap: 13px; padding: 16px 14px; border-radius: 13px; margin: 6px 0; border: 1px solid transparent; }
+.leaderboard-row.podium-1 { background: linear-gradient(90deg, #50411e, #28311c); border-color: #f4c76e66; }
+.leaderboard-row.podium-2 { background: linear-gradient(90deg, #394246, #1b2824); border-color: #c8d2d555; }
+.leaderboard-row.podium-3 { background: linear-gradient(90deg, #4a3024, #2b231d); border-color: #d49a6b55; }
+.leaderboard-place { width: 27px; text-align: center; font-size: 18px; font-weight: 700; }
+.leaderboard-name { flex: 1; min-width: 0; }
+.leaderboard-name b { display: block; overflow-wrap: anywhere; }
+.leaderboard-row strong { font-variant-numeric: tabular-nums; }
+@media (max-width: 700px) {
+  .avatar-picker { grid-template-columns: 1fr; justify-items: center; }
+  .avatar-picker fieldset { width: 100%; }
+  .avatar-options { justify-content: center; }
+  .leaderboard-row { gap: 9px; padding: 12px 9px; }
+  .leaderboard-place { width: 20px; font-size: 14px; }
+}

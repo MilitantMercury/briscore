@@ -60,7 +60,7 @@ export function NewSession({
             {busy ? "Creazione stanza…" : "Inizia sessione"} <span>→</span>
           </button>
           <p className="form-note">
-            Tu crei il tavolo. Gli altri accedono e scelgono il proprio posto.
+            Tu crei il tavolo. Gli altri accedono dal link e occupano il primo posto libero.
           </p>
         </form>
       </section>
