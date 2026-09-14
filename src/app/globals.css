@@ -1344,8 +1344,8 @@ body {
 .avatar-stage-normal { width:80px; height:94px; }
 .avatar-stage-small { width:44px; height:49px; }
 .avatar-stage-large { width:124px; height:150px; }
-.avatar-stage .rank-badge { z-index:3; top:-19px; right:-15px; }
-.avatar-stage .player-avatar.has-image .rank-badge { top:-19px; right:-15px; }
+.avatar-stage .rank-badge { z-index:3; top:-32px; left:50%; right:auto; transform:translateX(-50%); font-size:26px; line-height:1; }
+.avatar-stage .player-avatar.has-image .rank-badge { top:-32px; left:50%; right:auto; }
 .player-card .avatar-stage { max-width:100%; }
 .player-card .player-avatar { margin-top:0; }
 .player-card-name { min-height:35px; }
@@ -1362,4 +1362,11 @@ body {
 }
 @media (prefers-reduced-motion:reduce) {
   .effect-frame,.table-glow,.player-card { animation:none !important; }
+}
+/* Give flames a taller silhouette above the portrait. */
+.effect-frame.effect-frame-fire {
+  width:190% !important;
+  height:190% !important;
+  left:-45% !important;
+  top:-55% !important;
 }
