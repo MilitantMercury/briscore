@@ -3,8 +3,6 @@ import { ApiError } from "./api-error";
 import {
   calculateHandScore,
   parseSession,
-  validatePlayers,
-  type Player,
 } from "./game";
 import type { Room, RoomInvite } from "./room-types";
 export type { Room, Proposal } from "./room-types";
@@ -32,12 +30,9 @@ function hydrate(data: Room): Room {
     })),
   };
 }
-export async function createRoom(auth: AuthContext, players: Player[]) {
-  validatePlayers(players);
+export async function createRoom(auth: AuthContext) {
   return hydrate(
-    await rpc(auth, "briscore_create_room", {
-      p_names: players.map((p) => p.name.trim()),
-    }),
+    await rpc(auth, "briscore_create_room", {}),
   );
 }
 export async function getRoom(auth: AuthContext, id: string) {
@@ -55,12 +50,14 @@ export async function joinRoom(
   id: string,
   token: string,
   playerId: string,
+  name: string,
 ) {
   return hydrate(
     await rpc(auth, "briscore_join_room", {
       p_room: id,
       p_token: token,
       p_player: playerId,
+      p_name: name,
     }),
   );
 }

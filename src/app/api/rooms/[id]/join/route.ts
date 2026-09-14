@@ -14,6 +14,7 @@ export async function POST(request: Request, context: Context) {
           id,
           body.inviteToken as string,
           body.playerId as string,
+          body.name as string,
         )
       : await getInvite(auth, id, body.inviteToken as string);
     return Response.json(result, { headers: { "Cache-Control": "no-store" } });

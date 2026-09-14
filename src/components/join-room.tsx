@@ -9,16 +9,17 @@ export function JoinRoom({
 }: {
   invite: RoomInvite;
   busy: boolean;
-  onJoin: (playerId: string) => void;
+  onJoin: (playerId: string, name: string) => void;
   onBack: () => void;
 }) {
   const [playerId, setPlayerId] = useState("");
+  const [name, setName] = useState("");
   return (
     <section className="panel setup-panel join-panel">
       <span className="eyebrow">IL TUO POSTO AL TAVOLO</span>
       <h2>Entra nella partita</h2>
       <p className="muted">
-        Scegli il tuo nome. Questo posto verrà associato al tuo account.
+        Scegli un posto e indica il nome con cui vuoi comparire al tavolo.
       </p>
       <label>
         Giocatore
@@ -33,16 +34,17 @@ export function JoinRoom({
               value={player.id}
               disabled={player.occupied}
             >
-              {player.name}
+              {player.occupied ? player.name : `Posto ${invite.players.indexOf(player) + 1}`}
               {player.occupied ? " · già al tavolo" : ""}
             </option>
           ))}
         </select>
       </label>
+      <label>Nome visualizzato<input value={name} maxLength={30} onChange={(event) => setName(event.target.value)} placeholder="Il tuo nome" /></label>
       <button
         className="primary full"
-        disabled={busy || !playerId}
-        onClick={() => onJoin(playerId)}
+        disabled={busy || !playerId || !name.trim()}
+        onClick={() => onJoin(playerId, name.trim())}
       >
         Entra al tavolo
       </button>

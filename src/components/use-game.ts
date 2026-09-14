@@ -5,7 +5,6 @@ import {
   calculateHandScore,
   type Hand,
   type HandInput,
-  type Player,
 } from "@/lib/game";
 import type { Proposal, Room, RoomInvite } from "@/lib/room-types";
 import { supabase } from "@/lib/supabase-browser";
@@ -166,24 +165,25 @@ export function useGame() {
     if (next.inviteToken) query.set("invite", next.inviteToken);
     window.history.replaceState(null, "", "?" + query.toString());
   }
-  async function start(players: Player[]) {
+  async function start() {
     await run(async () => {
       const result = await api<{ room: Room }>("/api/rooms", {
         method: "POST",
-        body: JSON.stringify({ players }),
+        body: JSON.stringify({}),
       });
       remember({ id: result.room.id, inviteToken: result.room.inviteToken });
       acceptRoom(result.room);
       setOnline(true);
     });
   }
-  async function join(playerId: string) {
+  async function join(playerId: string, name: string) {
     await run(async () => {
       const next = await api<Room>(`/api/rooms/${credentials!.id}/join`, {
         method: "POST",
         body: JSON.stringify({
           inviteToken: credentials!.inviteToken,
           playerId,
+          name,
         }),
       });
       acceptRoom(next);

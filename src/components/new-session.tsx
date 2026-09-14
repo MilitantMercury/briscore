@@ -1,24 +1,11 @@
 "use client";
-import { useState } from "react";
-import { validatePlayers, type Player } from "@/lib/game";
 export function NewSession({
   busy,
   onStart,
 }: {
   busy: boolean;
-  onStart: (players: Player[]) => void;
+  onStart: () => void;
 }) {
-  const [names, setNames] = useState(["", "", "", "", ""]);
-  const players = names.map((name, i) => ({
-    id: `p${i + 1}`,
-    name: name.trim(),
-  }));
-  let error = "";
-  try {
-    validatePlayers(players);
-  } catch (e) {
-    error = (e as Error).message;
-  }
   return (
     <div className="setup-layout">
       <section className="intro">
@@ -60,43 +47,16 @@ export function NewSession({
           <span className="pill">5 giocatori</span>
         </div>
         <p className="muted">
-          Inserisci il tuo nome al primo posto, poi gli altri quattro giocatori.
+          Il tuo profilo sarà associato automaticamente al tavolo.
         </p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (!error && !busy) onStart(players);
+            if (!busy) onStart();
           }}
         >
-          <div className="name-fields">
-            {names.map((name, i) => (
-              <label key={i} className="name-field">
-                <span className={`avatar color-${i}`}>
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="sr-only">Giocatore {i + 1}</span>
-                <input
-                  autoComplete="off"
-                  maxLength={30}
-                  placeholder={
-                    i === 0 ? "Il tuo nome · host" : `Nome giocatore ${i + 1}`
-                  }
-                  value={name}
-                  onChange={(e) =>
-                    setNames(
-                      names.map((n, j) => (i === j ? e.target.value : n)),
-                    )
-                  }
-                />
-              </label>
-            ))}
-          </div>
-          {names.some((n) => n.trim()) && error && (
-            <p className="validation" role="status">
-              {error}
-            </p>
-          )}
-          <button disabled={!!error || busy} className="primary full">
+          <div className="profile-callout"><b>Sei già autenticato.</b><br />Gli altri quattro giocatori si aggiungeranno dal link di invito.</div>
+          <button disabled={busy} className="primary full">
             {busy ? "Creazione stanza…" : "Inizia sessione"} <span>→</span>
           </button>
           <p className="form-note">
