@@ -1,4 +1,4 @@
-export type Player = { id: string; name: string };
+export type Player = { id: string; name: string; isBot?: boolean };
 export type CallType = "normal" | "double" | "triple" | "carichi";
 export type HandResult = { playerId: string; delta: number };
 export type HandInput = {

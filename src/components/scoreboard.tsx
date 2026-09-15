@@ -33,7 +33,7 @@ export function Scoreboard({ session, members }: { session: Session; members: Me
               <PlayerAvatar name={player.name} avatar={member?.avatar} imagePath={member?.avatarImage} effect={member?.avatarEffect} rank={member?.globalRank} size="large" />
               <div className="player-card-name">
                 <b>{player.name}</b>
-                {isLeader && <small>IN TESTA</small>}
+                {isLeader ? <small>IN TESTA</small> : player.isBot ? <small className="bot-seat">BOT AL TAVOLO</small> : null}
               </div>
               <strong className={player.score > 0 ? "positive" : player.score < 0 ? "negative" : "neutral"}>{formatScore(player.score)}</strong>
             </article>

@@ -1747,6 +1747,7 @@ dialog:has(.dealer-form) { width:min(660px,calc(100% - 24px)); padding:0; overfl
 .table-stage .player-cards { gap: 17px; }
 .table-stage .player-card { min-height: 240px; padding: 18px 12px 15px; border-radius: 20px; }
 .table-stage .player-card-name b { font-size: 16px; }
+.player-card-name .bot-seat { color:#7b826f; }
 .table-stage .player-card strong { font-size: 37px; }
 .dealer-strip {
   position: relative;
