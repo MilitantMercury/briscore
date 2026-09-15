@@ -4,7 +4,6 @@ import { AuthPanel } from "@/components/auth-panel";
 import { Scoreboard } from "@/components/scoreboard";
 import { HandForm } from "@/components/hand-form";
 import { History } from "@/components/history";
-import { AccountMenu } from "@/components/account-menu";
 import { useGame } from "@/components/use-game";
 import { calls, formatScore } from "@/lib/game";
 export default function Home() {
@@ -36,40 +35,10 @@ export default function Home() {
     completeRoom,
     cancelRoom,
     leave,
-    signOut,
     share,
   } = useGame();
   return (
     <div className="app-shell">
-      <header className="topbar">
-        <button
-          className="brand brand-home"
-          onClick={leave}
-          aria-label="Briscore home"
-        >
-          <span className="brand-mark">b.</span>briscore
-          <span className="brand-dot">◆</span>
-        </button>
-        <div className="header-right">
-          {userId && (
-            <AccountMenu onSignOut={() => void signOut()} />
-          )}
-          {room ? (
-            <>
-              <span className={`connection ${online ? "connected" : ""}`}>
-                {online ? "In diretta" : "Riconnessione…"}
-              </span>
-              <span className="desktop-label">
-                {host ? "Sei l’host" : "Tavolo condiviso"}
-              </span>
-            </>
-          ) : (
-            <span className="desktop-label">
-              IL TUO SEGNAPUNTI, IN COMPAGNIA.
-            </span>
-          )}
-        </div>
-      </header>
       <main>
         {message && (
           <div className="notice" role="status">

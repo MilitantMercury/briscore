@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AppHeader } from "@/components/app-header";
 import "./globals.css";
 export const metadata: Metadata = {
   title: "Briscore — Il tavolo è pronto",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="it">
-      <body>{children}</body>
+      <body>
+        <AppHeader />
+        {children}
+      </body>
     </html>
   );
 }
