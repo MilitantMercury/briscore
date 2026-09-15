@@ -2,10 +2,10 @@
 
 ## Flusso di lavoro
 
-1. Parti da `main` aggiornata.
-2. Crea un branch descrittivo, per esempio `feat/sessioni-concluse` o `fix/login-email`.
-3. Fai modifiche piccole e coerenti.
-4. Prima della pull request esegui:
+1. Allinea `main` con `origin/main`.
+2. Crea un branch descrittivo, ad esempio `feat/avatar-effect` o `fix/invite-flow`.
+3. Mantieni le modifiche piccole, testabili e coerenti.
+4. Prima di aprire una pull request esegui:
 
 ```sh
 npm ci
@@ -15,20 +15,29 @@ npm run typecheck
 npm run build
 ```
 
-5. Apri una pull request verso `main` e attendi i controlli automatici.
-6. Il merge su `main` pubblica il codice su Vercel e applica le migrazioni Supabase tramite GitHub Actions.
+5. Apri una pull request verso `main` e attendi la pipeline.
+6. Il merge su `main` pubblica su Vercel, applica le migrazioni Supabase nell'environment `production` e produce l'attestazione della build.
 
 ## Convenzioni
 
-- Commit al presente e sintetici, per esempio `Fix magic link redirect`.
-- Una migrazione nuova per ogni modifica allo schema Supabase; non modificare migrazioni già applicate.
-- Non committare `.env.local`, chiavi Supabase o credenziali.
-- Le regole di punteggio devono restare in `src/lib/game.ts` e avere test corrispondenti.
+- Scrivi commit brevi al presente, per esempio `Fix room invitation redirect`.
+- Aggiungi una nuova migrazione per ogni modifica allo schema o alle funzioni Supabase: non riscrivere una migrazione applicata.
+- Non committare `.env.local`, chiavi Supabase, password o output di build.
+- La logica dei punteggi rimane concentrata in `src/lib/game.ts` e ogni regola nuova richiede test.
+- Un giocatore senza account deve essere trattato come bot: nessuna modifica deve farlo apparire nelle classifiche globali.
+- Mantieni accessibili i controlli: testi chiari, focus visibile e conferme Briscore per azioni irreversibili.
 
-## Secret GitHub richiesti
+## Dipendenze e sicurezza della supply chain
 
-L’environment GitHub `production` deve contenere:
+Dependabot controlla settimanalmente dipendenze npm e GitHub Actions. Verifica sempre la pipeline e le note di rilascio prima di unire un aggiornamento rilevante.
+
+Le build su `main` ricevono un'attestazione di provenienza GitHub. Consulta la pagina [Attestations](https://github.com/MilitantMercury/briscore/attestations) per verificarne origine e commit.
+
+## Secret GitHub
+
+L'environment GitHub `production` deve contenere:
 
 - `SUPABASE_ACCESS_TOKEN`
 - `SUPABASE_DB_PASSWORD`
 
+Le variabili pubbliche `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` sono configurate su Vercel e non sono segreti.

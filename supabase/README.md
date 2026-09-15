@@ -1,6 +1,6 @@
 # Supabase operativo
 
-Progetto Briscore: `aauikdqmbdddnvfyrnhg`. Le migrazioni in `migrations/` sono la fonte dello schema. `schema.sql` è un rimando storico e non va usato per inizializzare il progetto.
+Progetto Briscore: `aauikdqmbdddnvfyrnhg`. Le migrazioni in [`migrations`](migrations) sono la fonte di verità dello schema; `schema.sql` è solo storico.
 
 ## Migrazioni
 
@@ -11,34 +11,46 @@ supabase db push --linked
 supabase db lint --linked --level error
 ```
 
-La prima migrazione crea le tabelle originarie. La seconda aggiunge inviti, associazione account/posto, vincoli, RPC, policy RLS e pubblicazione Realtime.
+Non modificare mai una migrazione già applicata: aggiungine una nuova.
 
-## Contratto
+## Contratto applicativo
 
-- `briscore_create_room`: cinque nomi distinti, account host al primo posto; massimo 20 creazioni per account all'ora.
-- `briscore_invite`: anteprima dei soli posti, per account autenticato con invito valido.
-- `briscore_join_room`: occupa un posto libero sotto lock sulla stanza; massimo cinque account.
-- `briscore_get_room`: snapshot completa riservata ai membri.
-- `briscore_mutate`: aggiunta, modifica, eliminazione, reset, proposta, approvazione/rifiuto, nuovo giro e conclusione sessione; lock e revisione in una sola transazione. Dopo cinque mani il giro è bloccato. Massimo 30 proposte pendenti per stanza.
+- `briscore_create_room`: crea cinque posti; l'host occupa il primo, gli altri sono bot finché non vengono occupati da un account.
+- `briscore_enter_room`: con invito valido assegna automaticamente il primo posto disponibile ai primi cinque account; dal sesto crea uno spettatore.
+- `briscore_get_room`: restituisce lo snapshot soltanto ai membri della stanza.
+- `briscore_mutate`: aggiunta, modifica, eliminazione, proposte, approvazione host, giri, conclusione e reset; ogni operazione è protetta da lock e revisione.
+- `briscore_cancel_room`: annulla una sessione attiva senza alimentare la classifica globale.
+- `briscore_leaderboard`: considera soltanto account autenticati in posti non bot e sessioni concluse.
 
-Le tabelle sono leggibili solo dai membri tramite RLS. Le scritture dirette sono revocate, anche all'host: si usano le RPC. Le funzioni interne sono in `briscore_private`, con execute revocato; solo il controllo RLS di appartenenza è eseguibile dagli account. Tutte le funzioni SECURITY DEFINER hanno search_path vuoto e controlli espliciti di identità/appartenenza.
+Le mani usano input immutabili; punti e classifica vengono ricalcolati. Il database valida ruoli, giocatori della stanza, Carichi, capotto e transizioni di stato. La somma di ogni mano è sempre zero.
 
-La tabella `hands` conserva gli input, non i punteggi derivati. I vincoli impediscono un chiamato in Carichi, ruoli uguali e giocatori di altre stanze. Il capotto è valido in entrambi gli esiti e raddoppia i delta. Gli ID degli account rimangono nelle membership; nomi e punteggi non autorizzano alcuna operazione.
+## Sicurezza e Realtime
 
-La pipeline `.github/workflows/supabase-and-checks.yml` applica automaticamente le migrazioni al progetto `aauikdqmbdddnvfyrnhg` dopo i controlli di qualità. I secret sono configurati nell'environment GitHub `production` e non devono mai essere committati.
+Le tabelle sono leggibili tramite RLS solo dai membri. Le scritture dirette sono revocate: il client usa RPC con JWT utente. Le funzioni interne in `briscore_private` hanno `search_path` vuoto e privilegi non eseguibili dagli utenti.
 
-La pubblicazione Realtime comprende `rooms`: ogni transazione aggiorna la revisione una sola volta. I client iscritti con JWT ricevono solo gli UPDATE autorizzati e ricaricano la snapshot completa. Non si diffondono eventi DELETE delle singole mani.
+Realtime pubblica gli aggiornamenti della tabella `rooms`; il client riceve l'evento e ricarica uno snapshot autorizzato. I delta delle mani non vengono diffusi come eventi indipendenti.
 
-## Login e redirect
+## Auth, redirect e Storage
 
-L'app richiede account reali; Anonymous Sign-Ins non è necessario. Email è abilitata nel progetto verificato. Google e Apple sono predisposti nel codice ma ancora disabilitati sul progetto: servono le credenziali OAuth dei rispettivi provider.
+L'app richiede account reali; Anonymous Sign-Ins non sono usati. Configura magic link e i provider OAuth desiderati in Supabase Authentication. In **URL Configuration** inserisci il dominio Vercel effettivo e gli URL locali di sviluppo, ad esempio `http://localhost:3000/**`.
 
-In Supabase Authentication → URL Configuration configurare il Site URL del sito effettivo e gli Additional Redirect URLs. Per lo sviluppo, autorizzare le origini utilizzate, ad esempio `http://localhost:3000/**` e `http://localhost:3100/**`. Gli inviti usano query string: il redirect deve conservarle. In produzione usare il proprio dominio HTTPS e percorsi strettamente necessari.
+Le immagini avatar usano il bucket `avatars`; URL e publishable key sono sufficienti per browser e API utente. Non esporre mai service-role key o password come variabili `NEXT_PUBLIC`.
 
-Non mettere service-role o secret key nelle variabili NEXT_PUBLIC. URL e publishable key sono sufficienti sia per il browser sia per le API utente.
+## Osservabilità e manutenzione
 
-## Documentazione ufficiale
+Grafana integrato in Supabase è il punto di monitoraggio per database, Auth e API. I segnali più utili sono errori delle RPC, latenza, errori OAuth e saturazione connessioni.
+
+Supabase Cron è disponibile per manutenzione futura. Non sono attivi job automatici: prima di aggiungere pulizia di avatar, inviti o tavoli inattivi, definisci conservazione dati e impatto per gli utenti.
+
+## Pipeline GitHub
+
+`.github/workflows/supabase-and-checks.yml` esegue lint, test, typecheck e build su ogni push a `main`, firma l'artefatto della build con GitHub Attestations e applica le migrazioni nell'environment `production`.
+
+I secret richiesti sono `SUPABASE_ACCESS_TOKEN` e `SUPABASE_DB_PASSWORD`. Il workflow usa Supabase CLI v3 e Node.js 22.
+
+## Riferimenti
 
 - [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [Database functions](https://supabase.com/docs/guides/database/functions)
 - [Realtime Postgres changes](https://supabase.com/docs/guides/realtime/postgres-changes)
+- [Supabase Cron](https://supabase.com/docs/guides/cron)
