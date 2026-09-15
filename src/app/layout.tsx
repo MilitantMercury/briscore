@@ -17,6 +17,9 @@ export default function RootLayout({
       <body>
         <AppHeader />
         {children}
+        <span className="app-version" aria-label="Versione app">
+          v1.0.0
+        </span>
       </body>
     </html>
   );

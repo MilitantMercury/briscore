@@ -842,6 +842,18 @@ footer > span:last-child {
 .stats > div > span:nth-child(2) {
   color: var(--muted);
 }
+
+.app-version {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 0.75rem;
+  z-index: 20;
+  color: #d3bd7466;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  pointer-events: none;
+}
 .stats > div { align-items:center; }
 .stats-player { display:grid; flex:1; gap:4px; min-width:150px; }.stats-player > span { color:var(--muted); font-size:12px; }
 .stats-score { display:grid; min-width:58px; gap:1px; text-align:right; }.stats-score strong { font-size:23px; line-height:1; }.stats-score small { color:var(--muted); font-size:10px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; }
