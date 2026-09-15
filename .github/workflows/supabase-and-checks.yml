@@ -8,6 +8,10 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -35,6 +39,14 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: https://aauikdqmbdddnvfyrnhg.supabase.co
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-build-placeholder
         run: npm run build
+
+      - name: Package verified production build
+        run: tar -czf briscore-next-build.tgz .next
+
+      - name: Attest build provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: briscore-next-build.tgz
 
   migrate:
     needs: verify
