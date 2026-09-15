@@ -306,19 +306,29 @@ export default function Home() {
                   const points = room.session.hands
                     .flatMap((h) => h.results)
                     .filter((r) => r.playerId === p.id);
+                  const wonPoints = points.reduce(
+                    (sum, result) => sum + Math.max(0, result.delta),
+                    0,
+                  );
+                  const lostPoints = points.reduce(
+                    (sum, result) => sum + Math.min(0, result.delta),
+                    0,
+                  );
+                  const totalPoints = wonPoints + lostPoints;
                   return (
                     <div key={p.id}>
-                      <b>{p.name}</b>
-                      <span>
-                        {hands.length} chiamate ·{" "}
-                        {hands.filter((h) => h.callerWon).length} vinte
-                      </span>
-                      <span className="positive">
-                        +{points.reduce((s, r) => s + Math.max(0, r.delta), 0)}
-                      </span>
-                      <span className="negative">
-                        {points.reduce((s, r) => s + Math.min(0, r.delta), 0)}
-                      </span>
+                      <div className="stats-player">
+                        <b>{p.name}</b>
+                        <span>
+                          {hands.length} chiamate ·{" "}
+                          {hands.filter((h) => h.callerWon).length} vinte
+                        </span>
+                      </div>
+                      <div className="stats-score">
+                        <strong className={totalPoints > 0 ? "positive" : totalPoints < 0 ? "negative" : "neutral"}>{formatScore(totalPoints)}</strong>
+                        <small>Totale</small>
+                      </div>
+                      <span className="stats-detail"><i className="positive">+{wonPoints}</i><i className="negative">{lostPoints}</i></span>
                     </div>
                   );
                 })}

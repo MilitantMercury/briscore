@@ -842,6 +842,10 @@ footer > span:last-child {
 .stats > div > span:nth-child(2) {
   color: var(--muted);
 }
+.stats > div { align-items:center; }
+.stats-player { display:grid; flex:1; gap:4px; min-width:150px; }.stats-player > span { color:var(--muted); font-size:12px; }
+.stats-score { display:grid; min-width:58px; gap:1px; text-align:right; }.stats-score strong { font-size:23px; line-height:1; }.stats-score small { color:var(--muted); font-size:10px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; }
+.stats-detail { display:flex; gap:7px; min-width:90px; justify-content:flex-end; }.stats-detail i { font-size:12px; font-style:normal; font-weight:700; }
 dialog {
   background: var(--panel);
   color: var(--text);
@@ -1140,6 +1144,7 @@ select {
     flex-basis: 100%;
     order: 1;
   }
+  .stats-player { flex-basis:100%; }.stats-score { text-align:left; }.stats-detail { justify-content:flex-start; }
 }
 @media (prefers-reduced-motion: reduce) {
   * {
