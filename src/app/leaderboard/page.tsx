@@ -22,8 +22,8 @@ export default function LeaderboardPage() {
     {!loading&&!error&&!rows.length&&<section className="empty-deck"><span>IL PODIO ASPETTA</span><h2>La classifica si riempirà dopo la prima sessione conclusa.</h2></section>}
     {!!podium.length && <section className="podium-stage" aria-label="Podio globale">
       {podium.map((row)=><article className={`podium-card podium-place-${row.rank}`} key={row.userId}>
-        <span className="podium-medal">{medals[row.rank-1]}</span>
         <PlayerAvatar name={row.name} avatar={row.avatar} imagePath={row.avatarImage} effect={row.avatarEffect} rank={row.rank} size="large" />
+        <span className="podium-medal">{medals[row.rank-1]}</span>
         <b>{row.name}</b><span>{row.games} {row.games===1?"sessione":"sessioni"} · {row.wins} vinte</span><strong className={row.points>=0?"positive":"negative"}>{row.points>0?"+":""}{row.points}</strong>
       </article>)}
     </section>}
