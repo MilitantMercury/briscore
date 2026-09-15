@@ -40,5 +40,26 @@ export default function ProfilePage() {
     const { error } = await supabase.auth.updateUser({ data: { display_name: next, avatar, avatarImage: imagePath, avatarEffect: effect } });
     setMessage(error ? "Non riesco ad aggiornare il profilo." : "Profilo aggiornato.");
   }
-  return <main className="standalone-page"><Link className="back-link" href="/">← Torna al tavolo</Link><section className="panel profile-page card-surface"><span className="eyebrow">IL TUO ACCOUNT</span><h1>La tua carta<span className="lime">.</span></h1><p className="muted">Personalizza immagine, seme ed effetto del tuo avatar.</p><form onSubmit={save}><div className="avatar-picker"><div className="avatar-preview"><PlayerAvatar avatar={avatar} imagePath={avatarImage} effect={effect} name={name || "Giocatore"} size="large" /><b>{name || "Il tuo nome"}</b></div><fieldset><legend>Simbolo</legend><div className="avatar-options">{avatarOptions.map(option=><button type="button" key={option} className={avatar===option?"avatar-choice selected":"avatar-choice"} onClick={()=>{setAvatar(option);setAvatarImage("");setFile(null);}}><PlayerAvatar avatar={option} name={option} size="small" /></button>)}</div><label className="avatar-upload">Immagine personale<input type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>{const next=event.target.files?.[0]||null;setFile(next);if(next)setAvatarImage("");}} /><small>Le foto grandi vengono ridotte automaticamente.</small></label></fieldset></div><fieldset className="effect-picker"><legend>Effetto attorno all’avatar</legend><div>{[["","Nessuno"],["fire","Fuoco"],["water","Acqua"],["sparkles","Scintille"]].map(([value,label])=><button type="button" key={value} className={effect===value?"effect-choice selected":"effect-choice"} onClick={()=>setEffect(value)}>{label}</button>)}</div></fieldset><label>Nome visualizzato<input value={name} onChange={event=>setName(event.target.value)} maxLength={40} /></label><label>Email<input value={email} readOnly /></label><button className="primary full">Salva il profilo</button></form>{message&&<p className="info" role="status">{message}</p>}</section></main>;
+  return <main className="standalone-page profile-scene">
+    <Link className="back-link deck-back" href="/">← Torna al tavolo</Link>
+    <section className="profile-hero"><span className="eyebrow">LA TUA CARTA GIOCATORE</span><h1>La tua carta<span className="lime">.</span></h1><p>Personalizza immagine, seme ed effetto: al tavolo ti riconoscono tutti.</p></section>
+    <form className="profile-form" onSubmit={save}>
+      <section className="profile-card-preview">
+        <span className="profile-card-label">IL TUO POSTO AL TAVOLO</span>
+        <div className="profile-avatar-frame"><PlayerAvatar avatar={avatar} imagePath={avatarImage} effect={effect} name={name || "Giocatore"} size="large" /></div>
+        <b>{name || "Il tuo nome"}</b><small>{effect ? `Effetto: ${effect === "fire" ? "Fuoco" : effect === "water" ? "Acqua" : "Scintille"}` : "Nessun effetto"}</small>
+      </section>
+      <section className="panel profile-controls deal-card">
+        <div className="profile-controls-heading"><span className="eyebrow">PERSONALIZZA</span><h2>Costruisci la tua carta</h2></div>
+        <div className="profile-control-grid">
+          <fieldset className="profile-symbols"><legend>Simbolo</legend><div className="avatar-options">{avatarOptions.map(option=><button type="button" key={option} className={avatar===option?"avatar-choice selected":"avatar-choice"} onClick={()=>{setAvatar(option);setAvatarImage("");setFile(null);}}><PlayerAvatar avatar={option} name={option} size="small" /></button>)}</div></fieldset>
+          <label className="avatar-upload profile-upload">Immagine personale<input type="file" accept="image/jpeg,image/png,image/webp" onChange={event=>{const next=event.target.files?.[0]||null;setFile(next);if(next)setAvatarImage("");}} /><small>JPG, PNG o WebP. Le foto grandi vengono ridotte automaticamente.</small></label>
+        </div>
+        <fieldset className="effect-picker profile-effects"><legend>Effetto attorno all’avatar</legend><div>{[["","Nessuno"],["fire","Fuoco"],["water","Acqua"],["sparkles","Scintille"]].map(([value,label])=><button type="button" key={value} className={effect===value?"effect-choice selected":"effect-choice"} onClick={()=>setEffect(value)}>{label}</button>)}</div></fieldset>
+        <div className="profile-fields"><label>Nome visualizzato<input value={name} onChange={event=>setName(event.target.value)} maxLength={40} /></label><label>Email<input value={email} readOnly /></label></div>
+        <button className="primary profile-save">Salva la tua carta <span>→</span></button>
+        {message&&<p className="info" role="status">{message}</p>}
+      </section>
+    </form>
+  </main>;
 }
