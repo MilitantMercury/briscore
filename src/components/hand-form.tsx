@@ -51,9 +51,9 @@ export function HandForm({
         e.preventDefault();
         if (!error && !busy) onSave(input);
       }}
-      className="hand-form"
+      className="hand-form dealer-form"
     >
-      <div className="section-heading">
+      <div className="section-heading dealer-form-header">
         <div>
           <span className="eyebrow">IL PROSSIMO GIRO</span>
           <h2>{initial ? "Modifica mano" : "Aggiungi mano"}</h2>
@@ -67,7 +67,7 @@ export function HandForm({
           ×
         </button>
       </div>
-      <label>
+      <label className="dealer-field">
         Chiamante
         <select
           autoFocus
@@ -85,9 +85,9 @@ export function HandForm({
           ))}
         </select>
       </label>
-      <fieldset>
+      <fieldset className="dealer-fieldset">
         <legend>Tipo di chiamata</legend>
-        <div className="call-options">
+        <div className="call-options dealer-call-options">
           {(Object.keys(calls) as CallType[]).map((t) => (
             <button
               key={t}
@@ -106,7 +106,7 @@ export function HandForm({
         </div>
       </fieldset>
       {callType !== "carichi" ? (
-        <label>
+        <label className="dealer-field">
           Chiamato
           <select
             value={calledPlayerId}
@@ -123,13 +123,13 @@ export function HandForm({
           </select>
         </label>
       ) : (
-        <p className="info">
+        <p className="info dealer-note">
           Carichi: il chiamante gioca da solo contro gli altri quattro.
         </p>
       )}
-      <fieldset>
+      <fieldset className="dealer-fieldset">
         <legend>Il chiamante ha…</legend>
-        <div className="outcomes">
+        <div className="outcomes dealer-outcomes">
           <button
             type="button"
             className={`choice ${won === true ? "selected" : ""}`}
@@ -150,7 +150,7 @@ export function HandForm({
           </button>
         </div>
       </fieldset>
-      <label className="capotto-toggle">
+      <label className="capotto-toggle dealer-capotto">
         <input
           type="checkbox"
           checked={capotto}
@@ -159,7 +159,7 @@ export function HandForm({
         />
         Capotto <small>(raddoppia i punti)</small>
       </label>
-      <div className="preview" aria-live="polite">
+      <div className="preview dealer-preview" aria-live="polite">
         <span className="eyebrow">ANTEPRIMA PUNTI</span>
         {results.length ? (
           <>
@@ -186,7 +186,7 @@ export function HandForm({
           {message}
         </p>
       )}
-      <button className="primary full" disabled={!!error || busy}>
+      <button className="primary full dealer-submit" disabled={!!error || busy}>
         {busy ? "Salvataggio…" : isHost ? "Conferma mano" : "Invia all’host"}
       </button>
       {!isHost && (
