@@ -4,7 +4,11 @@ import { supabase } from "@/lib/supabase-browser";
 const pendingRoomKey = "briscore-pending-room";
 export function AuthPanel() {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(() => {
+    if (typeof window === "undefined") return "";
+    const params = new URLSearchParams(window.location.hash.slice(1));
+    return params.get("error_description") || "";
+  });
   const [busy, setBusy] = useState(false);
   const [providers, setProviders] = useState({ google: false, apple: false });
   useEffect(() => {
@@ -19,12 +23,6 @@ export function AuthPanel() {
           });
       })
       .catch(() => {});
-    const params = new URLSearchParams(window.location.hash.slice(1));
-    if (params.has("error_description"))
-      setMessage(
-        params.get("error_description") ||
-          "Accesso non riuscito. Richiedi un nuovo link.",
-      );
     return () => {
       active = false;
     };

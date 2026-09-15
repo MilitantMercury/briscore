@@ -38,18 +38,21 @@ export function PlayerAvatar({
   rank?: number | null;
   size?: "small" | "normal" | "large";
 }) {
-  const [imageUrl, setImageUrl] = useState("");
+  const [image, setImage] = useState<{ path: string; url: string } | null>(null);
   useEffect(() => {
     let active = true;
     let objectUrl = "";
-    if (!imagePath) { setImageUrl(""); return; }
+    if (!imagePath) return;
     void supabase.storage.from("avatars").download(imagePath).then(({ data }) => {
-      if (data && active) { objectUrl = URL.createObjectURL(data); setImageUrl(objectUrl); }
+      if (data && active) {
+        objectUrl = URL.createObjectURL(data);
+        setImage({ path: imagePath, url: objectUrl });
+      }
     });
     return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
   }, [imagePath]);
   const badge = rank && rank <= 3 ? ["👑", "🥈", "🥉"][rank - 1] : null;
-  const displayedImage = previewUrl || imageUrl;
+  const displayedImage = previewUrl || (image?.path === imagePath ? image?.url : "");
   return (
     <span className={`avatar-stage avatar-stage-${size}`}><span className={`player-avatar avatar-${avatar} avatar-${size} ${displayedImage ? "has-image" : ""} ${effect ? `avatar-effect-${effect}` : ""}`} aria-label={`Avatar di ${name}`}>
       {effect && effectFrames[effect] && <Image className={`effect-frame effect-frame-${effect}`} src={effectFrames[effect]} alt="" fill sizes="150px" />}

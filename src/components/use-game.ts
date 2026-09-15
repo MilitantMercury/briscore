@@ -25,6 +25,7 @@ export function useGame() {
   const [showStats, setShowStats] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [authReady, setAuthReady] = useState(false);
+  const authenticatedUserId = useRef<string | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const host = !!room && room.hostId === userId;
   const playerId = room?.members.find(
@@ -39,18 +40,28 @@ export function useGame() {
   }
   useEffect(() => {
     let active = true;
+    const receiveSession = (session: { user: { id: string } } | null) => {
+      const nextUserId = session?.user.id ?? null;
+      if (authenticatedUserId.current !== nextUserId) {
+        authenticatedUserId.current = nextUserId;
+        setUserId(nextUserId);
+        setRoom(null);
+        setEditorState(null);
+        setEditorRevision(null);
+        setCredentials(null);
+        setOnline(false);
+        setReady(false);
+      }
+      setAuthReady(true);
+    };
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        if (active) {
-          setUserId(session?.user.id ?? null);
-          setAuthReady(true);
-        }
+        if (active) receiveSession(session);
       },
     );
     supabase.auth.getSession().then(({ data, error }) => {
       if (active) {
-        setUserId(data.session?.user.id ?? null);
-        setAuthReady(true);
+        receiveSession(data.session);
         if (error) setMessage("Sessione non disponibile. Accedi di nuovo.");
       }
     });
@@ -60,47 +71,46 @@ export function useGame() {
     };
   }, []);
   useEffect(() => {
-    setRoom(null);
-    setEditorState(null);
-    setEditorRevision(null);
-    setCredentials(null);
-    setOnline(false);
-    if (!userId) {
-      setReady(false);
-      return;
-    }
-    let saved: RoomReference | null = null;
-    try {
-      saved = JSON.parse(localStorage.getItem(storageKey + userId) || "null");
-    } catch {
-      /* Resume is optional. */
-    }
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("room");
-    let pending: RoomReference | null = null;
-    try {
-      pending = JSON.parse(localStorage.getItem(pendingRoomKey) || "null");
-    } catch {
-      /* Resume is optional. */
-    }
-    const reference = id
-      ? { id, inviteToken: params.get("invite") || undefined }
-      : pending || saved;
-    if (reference && /^[a-f0-9-]{36}$/i.test(reference.id)) {
-      setCredentials(reference);
-    } else if (reference) {
-      setMessage(
-        "Questa è una vecchia partita locale. Crea una nuova stanza Supabase.",
-      );
-    }
-    if (pending) {
+    if (!userId) return;
+    let active = true;
+    void (async () => {
+      let saved: RoomReference | null = null;
       try {
-        localStorage.removeItem(pendingRoomKey);
+        saved = JSON.parse(localStorage.getItem(storageKey + userId) || "null");
       } catch {
-        /* Optional browser resume. */
+        /* Resume is optional. */
       }
-    }
-    setReady(true);
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("room");
+      let pending: RoomReference | null = null;
+      try {
+        pending = JSON.parse(localStorage.getItem(pendingRoomKey) || "null");
+      } catch {
+        /* Resume is optional. */
+      }
+      if (!active) return;
+      const reference = id
+        ? { id, inviteToken: params.get("invite") || undefined }
+        : pending || saved;
+      if (reference && /^[a-f0-9-]{36}$/i.test(reference.id)) {
+        setCredentials(reference);
+      } else if (reference) {
+        setMessage(
+          "Questa è una vecchia partita locale. Crea una nuova stanza Supabase.",
+        );
+      }
+      if (pending) {
+        try {
+          localStorage.removeItem(pendingRoomKey);
+        } catch {
+          /* Optional browser resume. */
+        }
+      }
+      setReady(true);
+    })();
+    return () => {
+      active = false;
+    };
   }, [userId]);
   useEffect(() => {
     if (
