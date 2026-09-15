@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { supabase } from "@/lib/supabase-browser";
 const symbols: Record<string, string> = {
   bastoni: "♣",
@@ -51,8 +52,8 @@ export function PlayerAvatar({
   const displayedImage = previewUrl || imageUrl;
   return (
     <span className={`avatar-stage avatar-stage-${size}`}><span className={`player-avatar avatar-${avatar} avatar-${size} ${displayedImage ? "has-image" : ""} ${effect ? `avatar-effect-${effect}` : ""}`} aria-label={`Avatar di ${name}`}>
-      {effect && effectFrames[effect] && <img className={`effect-frame effect-frame-${effect}`} src={effectFrames[effect]} alt="" />}
-      {displayedImage ? <img src={displayedImage} alt="" /> : symbols[avatar] || name.slice(0, 1).toUpperCase()}
+      {effect && effectFrames[effect] && <Image className={`effect-frame effect-frame-${effect}`} src={effectFrames[effect]} alt="" fill sizes="150px" />}
+      {displayedImage ? <Image src={displayedImage} alt="" fill unoptimized sizes="150px" /> : symbols[avatar] || name.slice(0, 1).toUpperCase()}
       {badge && <i className={`rank-badge rank-${rank}`}>{badge}</i>}
     </span></span>
   );
