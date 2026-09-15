@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AppHeader } from "@/components/app-header";
+import packageInfo from "../../package.json";
 import "./globals.css";
 export const metadata: Metadata = {
   title: "Briscore — Il tavolo è pronto",
@@ -18,7 +19,7 @@ export default function RootLayout({
         <AppHeader />
         {children}
         <span className="app-version" aria-label="Versione app">
-          v1.0.0
+          v{packageInfo.version}
         </span>
       </body>
     </html>
