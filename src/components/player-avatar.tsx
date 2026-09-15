@@ -23,6 +23,7 @@ export const avatarOptions = Object.keys(symbols);
 export function PlayerAvatar({
   avatar = "bastoni",
   imagePath,
+  previewUrl,
   effect,
   name,
   rank,
@@ -30,6 +31,7 @@ export function PlayerAvatar({
 }: {
   avatar?: string;
   imagePath?: string;
+  previewUrl?: string;
   effect?: string;
   name: string;
   rank?: number | null;
@@ -46,10 +48,11 @@ export function PlayerAvatar({
     return () => { active = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
   }, [imagePath]);
   const badge = rank && rank <= 3 ? ["👑", "🥈", "🥉"][rank - 1] : null;
+  const displayedImage = previewUrl || imageUrl;
   return (
-    <span className={`avatar-stage avatar-stage-${size}`}><span className={`player-avatar avatar-${avatar} avatar-${size} ${imageUrl ? "has-image" : ""} ${effect ? `avatar-effect-${effect}` : ""}`} aria-label={`Avatar di ${name}`}>
+    <span className={`avatar-stage avatar-stage-${size}`}><span className={`player-avatar avatar-${avatar} avatar-${size} ${displayedImage ? "has-image" : ""} ${effect ? `avatar-effect-${effect}` : ""}`} aria-label={`Avatar di ${name}`}>
       {effect && effectFrames[effect] && <img className={`effect-frame effect-frame-${effect}`} src={effectFrames[effect]} alt="" />}
-      {imageUrl ? <img src={imageUrl} alt="" /> : symbols[avatar] || name.slice(0, 1).toUpperCase()}
+      {displayedImage ? <img src={displayedImage} alt="" /> : symbols[avatar] || name.slice(0, 1).toUpperCase()}
       {badge && <i className={`rank-badge rank-${rank}`}>{badge}</i>}
     </span></span>
   );
