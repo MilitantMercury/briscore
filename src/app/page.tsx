@@ -1,12 +1,15 @@
 "use client";
+import { useState } from "react";
 import { NewSession } from "@/components/new-session";
 import { AuthPanel } from "@/components/auth-panel";
 import { Scoreboard } from "@/components/scoreboard";
 import { HandForm } from "@/components/hand-form";
 import { History } from "@/components/history";
+import { ConfirmDialog, type Confirmation } from "@/components/confirm-dialog";
 import { useGame } from "@/components/use-game";
 import { calls, formatScore } from "@/lib/game";
 export default function Home() {
+  const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
   const {
     room,
     credentials,
@@ -144,10 +147,7 @@ export default function Home() {
                     <button
                       disabled={busy || !online}
                       className="text-button undo"
-                      onClick={() => {
-                        if (window.confirm("Annullare l’ultima mano?"))
-                          void change("delete", room.session.hands.at(-1)!);
-                      }}
+                      onClick={() => setConfirmation({ title: "Annullare l’ultima mano?", message: host ? "I punti della mano verranno ricalcolati per tutto il tavolo." : "L’host riceverà la tua richiesta di annullamento.", confirmLabel: host ? "Annulla la mano" : "Invia richiesta", tone: "danger", onConfirm: () => void change("delete", room.session.hands.at(-1)!) })}
                     >
                       ↶ {host ? "Annulla ultima mano" : "Proponi annullamento"}
                     </button>
@@ -187,16 +187,7 @@ export default function Home() {
                           setMessage("");
                           setEditor(h);
                         }}
-                        onDelete={(h) => {
-                          if (
-                            window.confirm(
-                              host
-                                ? "Eliminare questa mano e ricalcolare i punti?"
-                                : "Proporre all’host di eliminare questa mano?",
-                            )
-                          )
-                            void change("delete", h);
-                        }}
+                        onDelete={(h) => setConfirmation({ title: host ? "Eliminare questa mano?" : "Proporre l’eliminazione?", message: host ? "I punteggi saranno ricalcolati per tutti i giocatori." : "L’host dovrà approvare la proposta prima di modificare il tavolo.", confirmLabel: host ? "Elimina mano" : "Invia proposta", tone: "danger", onConfirm: () => void change("delete", h) })}
                       />
                     </div>
                   )}
@@ -299,7 +290,7 @@ export default function Home() {
               </button>
               <div>
                 {host && room.status === "active" && (
-                  <button disabled={busy || !online} className="text-button danger session-cancel" onClick={() => { if (window.confirm("Annullare questa partita? I punteggi non verranno conteggiati in classifica.")) void cancelRoom(); }}>
+                  <button disabled={busy || !online} className="text-button danger session-cancel" onClick={() => setConfirmation({ title: "Annullare la partita?", message: "La sessione verrà archiviata come annullata e i punteggi non entreranno in classifica.", confirmLabel: "Annulla partita", tone: "danger", onConfirm: () => void cancelRoom() })}>
                     ⊘ Annulla partita
                   </button>
                 )}
@@ -336,6 +327,7 @@ export default function Home() {
           </>
         )}
       </main>
+      <ConfirmDialog confirmation={confirmation} onClose={() => setConfirmation(null)} />
       <footer>
         <span>
           briscore <span className="lime">◆</span>

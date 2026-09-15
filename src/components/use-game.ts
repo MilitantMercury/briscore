@@ -255,13 +255,6 @@ export function useGame() {
     await run(async () => acceptRoom(await api<Room>(`/api/rooms/${room!.id}`, { method: "PUT", body: JSON.stringify({ revision: room!.revision, action: "cancel" }) })));
   }
   function leave() {
-    if (
-      room &&
-      !window.confirm(
-        "Tornare alle tue partite? Potrai riaprire questo tavolo dal tuo account.",
-      )
-    )
-      return;
     setRoom(null);
     setCredentials(null);
     setEditor(null);
