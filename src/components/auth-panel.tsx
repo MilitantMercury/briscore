@@ -7,6 +7,7 @@ export function AuthPanel() {
   const [email, setEmail] = useState("");
   const [guestName, setGuestName] = useState("");
   const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaVersion, setCaptchaVersion] = useState(0);
   const [message, setMessage] = useState(() => {
     if (typeof window === "undefined") return "";
     const params = new URLSearchParams(window.location.hash.slice(1));
@@ -98,6 +99,8 @@ export function AuthPanel() {
     } catch (error) {
       const authError = error as { code?: string; message?: string };
       console.error("Anonymous sign-in failed", error);
+      setCaptchaToken("");
+      setCaptchaVersion((version) => version + 1);
       const code = authError.code || "unknown_error";
       setMessage(`Accesso ospite fallito (${code}). ${authError.message || "Riprova tra poco."}`);
       setBusy(false);
@@ -161,7 +164,7 @@ export function AuthPanel() {
             <input id="guest-name" value={guestName} maxLength={30} required placeholder="Il tuo nome" onChange={(event) => setGuestName(event.target.value)} />
           </label>
           {turnstileSiteKey ? (
-            <Turnstile siteKey={turnstileSiteKey} options={{ theme: "dark", language: "it" }} onSuccess={setCaptchaToken} onExpire={() => setCaptchaToken("")} onError={() => setCaptchaToken("")} />
+            <Turnstile key={`guest-captcha-${captchaVersion}`} siteKey={turnstileSiteKey} options={{ theme: "dark", language: "it" }} onSuccess={setCaptchaToken} onExpire={() => { setCaptchaToken(""); setCaptchaVersion((version) => version + 1); }} onError={() => { setCaptchaToken(""); setCaptchaVersion((version) => version + 1); }} />
           ) : <small className="info">Accesso ospite non ancora configurato.</small>}
           <button className="secondary full" disabled={busy || !captchaToken}>Continua come ospite</button>
           <small className="muted">L’ospite non entra nella classifica globale e non conserva uno storico personale.</small>
