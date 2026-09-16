@@ -1808,3 +1808,7 @@ dialog:has(.dealer-form) { width:min(660px,calc(100% - 24px)); padding:0; overfl
   .dealer-actions { margin-top:11px; display:flex; align-items:center; justify-content:space-between; }.dealer-actions .primary { min-width:0; flex:1; }.dealer-actions .undo { font-size:11px; }
   .after-table-grid { display:flex; flex-direction:column; margin-top:26px; }.after-table-grid > * { width:100%; }.after-table-grid .rules-card { position:static; order:2; }.after-table-grid .history-section { order:1; }
 }
+
+.guest-name-field { display:grid; gap:8px; color:#dfe7d8; font-size:14px; font-weight:700; }
+.guest-name-field input { width:100%; min-height:50px; padding:11px 14px; border:1px solid #ead9934b; border-radius:10px; background:#07130ebd; color:#f3f5eb; }
+.guest-name-field input::placeholder { color:#89978a; }
