@@ -10,7 +10,13 @@ export class RequestError extends Error {
   }
 }
 export async function api<T>(url: string, options?: RequestInit): Promise<T> {
-  const { data, error } = await supabase.auth.getSession();
+  let { data, error } = await supabase.auth.getSession();
+  if ((error || !data.session) && typeof window !== "undefined") {
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    const retry = await supabase.auth.getSession();
+    data = retry.data;
+    error = retry.error;
+  }
   if (error || !data.session)
     throw new RequestError("Accedi per continuare.", 401, "UNAUTHORIZED");
   const headers = new Headers(options?.headers);
