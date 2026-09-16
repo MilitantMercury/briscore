@@ -153,7 +153,10 @@ export function AuthPanel() {
       {hasInvite && (
         <form className="guest-access" onSubmit={guest}>
           <div className="auth-divider">Oppure entra subito</div>
-          <label className="guest-name-field" htmlFor="guest-name">`n            <span>Nome al tavolo</span>`n            <input id="guest-name" value={guestName} maxLength={30} required placeholder="Il tuo nome" onChange={(event) => setGuestName(event.target.value)} />`n          </label>
+          <label className="guest-name-field" htmlFor="guest-name">
+            <span>Nome al tavolo</span>
+            <input id="guest-name" value={guestName} maxLength={30} required placeholder="Il tuo nome" onChange={(event) => setGuestName(event.target.value)} />
+          </label>
           {turnstileSiteKey ? (
             <Turnstile siteKey={turnstileSiteKey} options={{ theme: "dark", language: "it" }} onSuccess={setCaptchaToken} onExpire={() => setCaptchaToken("")} onError={() => setCaptchaToken("")} />
           ) : <small className="info">Accesso ospite non ancora configurato.</small>}
