@@ -95,8 +95,11 @@ export function AuthPanel() {
         options: { data: { display_name: guestName.trim() }, captchaToken },
       });
       if (error) throw error;
-    } catch {
-      setMessage("Non è stato possibile entrare come ospite. Riprova tra poco.");
+    } catch (error) {
+      const authError = error as { code?: string; message?: string };
+      console.error("Anonymous sign-in failed", error);
+      const code = authError.code || "unknown_error";
+      setMessage(`Accesso ospite fallito (${code}). ${authError.message || "Riprova tra poco."}`);
       setBusy(false);
     }
   }
