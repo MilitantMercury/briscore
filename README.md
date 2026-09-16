@@ -2,7 +2,7 @@
 
 Briscore è il tavolo condiviso per giocare a Briscolone in cinque: registra le mani in tempo reale, calcola i punti, conserva lo storico e costruisce una classifica globale degli account reali.
 
-L'app è realizzata con Next.js App Router, React, TypeScript e Supabase (Auth, Postgres, Realtime, Storage, Grafana e Cron). La produzione è su Vercel.
+L'app è realizzata con Next.js App Router, React, TypeScript e Supabase (Auth, Postgres, Realtime, Storage, Grafana e Cron). La produzione è su Vercel; Vercel Analytics raccoglie metriche aggregate di navigazione.
 
 ## Funzionalità
 
