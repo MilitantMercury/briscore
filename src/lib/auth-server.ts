@@ -7,7 +7,7 @@ import { ApiError } from "./api-error";
 
 export type AuthContext = { client: SupabaseClient; user: User };
 
-export async function requireUser(request: Request): Promise<AuthContext> {
+export async function requireUser(request: Request, options: { allowAnonymous?: boolean } = {}): Promise<AuthContext> {
   const match = request.headers
     .get("authorization")
     ?.match(/^Bearer\s+(\S+)$/i);
@@ -25,7 +25,7 @@ export async function requireUser(request: Request): Promise<AuthContext> {
     },
   });
   const { data, error } = await client.auth.getUser(token);
-  if (error || !data.user || data.user.is_anonymous)
+  if (error || !data.user || (!options.allowAnonymous && data.user.is_anonymous))
     throw new ApiError("UNAUTHORIZED", 401);
   return { client, user: data.user };
 }

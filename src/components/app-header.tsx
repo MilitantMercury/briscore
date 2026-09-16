@@ -20,11 +20,11 @@ export function AppHeader() {
 
   useEffect(() => {
     void supabase.auth.getSession().then(({ data }) => {
-      setSignedIn(Boolean(data.session));
+      setSignedIn(Boolean(data.session && !data.session.user.is_anonymous));
       setReady(true);
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSignedIn(Boolean(session));
+      setSignedIn(Boolean(session && !session.user.is_anonymous));
       setReady(true);
     });
     return () => listener.subscription.unsubscribe();

@@ -30,6 +30,10 @@ Le tabelle sono leggibili tramite RLS solo dai membri. Le scritture dirette sono
 
 Realtime pubblica gli aggiornamenti della tabella `rooms`; il client riceve l'evento e ricarica uno snapshot autorizzato. I delta delle mani non vengono diffusi come eventi indipendenti.
 
+Gli invitati possono entrare anche come ospiti tramite Supabase Anonymous Auth. Un ospite sceglie il nome al tavolo, partecipa in tempo reale e occupa un posto marcato come bot: non entra nella classifica globale e non conserva uno storico personale. Gli account registrati mantengono invece profilo, storico, avatar e corone.
+
+Per abilitarlo nel progetto: Dashboard Supabase → Authentication → Sign In / Providers → Anonymous Sign-Ins. Attiva anche CAPTCHA protection, scegli Cloudflare Turnstile e inserisci il secret key. Configura la site key pubblica in Vercel come `NEXT_PUBLIC_TURNSTILE_SITE_KEY`. L’abilitazione è necessaria solo per il pulsante “Continua come ospite”; gli altri provider non cambiano.
+
 ## Auth, redirect e Storage
 
 L'app richiede account reali; Anonymous Sign-Ins non sono usati. Configura magic link e i provider OAuth desiderati in Supabase Authentication. In **URL Configuration** inserisci il dominio Vercel effettivo e gli URL locali di sviluppo, ad esempio `http://localhost:3000/**`.

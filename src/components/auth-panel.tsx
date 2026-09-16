@@ -1,9 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { supabase } from "@/lib/supabase-browser";
 const pendingRoomKey = "briscore-pending-room";
 export function AuthPanel() {
   const [email, setEmail] = useState("");
+  const [guestName, setGuestName] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
   const [message, setMessage] = useState(() => {
     if (typeof window === "undefined") return "";
     const params = new URLSearchParams(window.location.hash.slice(1));
@@ -83,6 +86,22 @@ export function AuthPanel() {
       setBusy(false);
     }
   }
+  async function guest(event: React.FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    setMessage("");
+    try {
+      const { error } = await supabase.auth.signInAnonymously({
+        options: { data: { display_name: guestName.trim() }, captchaToken },
+      });
+      if (error) throw error;
+    } catch {
+      setMessage("Non è stato possibile entrare come ospite. Riprova tra poco.");
+      setBusy(false);
+    }
+  }
+  const hasInvite = typeof window !== "undefined" && new URLSearchParams(window.location.search).has("room");
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   return (
     <div className="auth-layout">
       <section className="auth-pitch">
@@ -131,6 +150,17 @@ export function AuthPanel() {
           {busy ? "Invio…" : "Invia magic link"}
         </button>
       </form>
+      {hasInvite && (
+        <form className="guest-access" onSubmit={guest}>
+          <div className="auth-divider">Oppure entra subito</div>
+          <label>Nome al tavolo<input value={guestName} maxLength={30} required placeholder="Il tuo nome" onChange={(event) => setGuestName(event.target.value)} /></label>
+          {turnstileSiteKey ? (
+            <Turnstile siteKey={turnstileSiteKey} options={{ theme: "dark", language: "it" }} onSuccess={setCaptchaToken} onExpire={() => setCaptchaToken("")} onError={() => setCaptchaToken("")} />
+          ) : <small className="info">Accesso ospite non ancora configurato.</small>}
+          <button className="secondary full" disabled={busy || !captchaToken}>Continua come ospite</button>
+          <small className="muted">L’ospite non entra nella classifica globale e non conserva uno storico personale.</small>
+        </form>
+      )}
       {message && (
         <p className="info" role="status">
           {message}
