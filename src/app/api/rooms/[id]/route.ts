@@ -7,7 +7,7 @@ type Context = { params: Promise<{ id: string }> };
 export async function GET(request: Request, context: Context) {
   try {
     return Response.json(
-      await getRoom(await requireUser(request), (await context.params).id),
+      await getRoom(await requireUser(request, { allowAnonymous: true }), (await context.params).id),
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (error) {
@@ -16,7 +16,7 @@ export async function GET(request: Request, context: Context) {
 }
 export async function PUT(request: Request, context: Context) {
   try {
-    const auth = await requireUser(request);
+    const auth = await requireUser(request, { allowAnonymous: true });
     const body = await readBody(request);
     return Response.json(
       body.action === "cancel"

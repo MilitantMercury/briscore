@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 type Context = { params: Promise<{ id: string }> };
 export async function POST(request: Request, context: Context) {
   try {
-    const auth = await requireUser(request);
+    const auth = await requireUser(request, { allowAnonymous: true });
     const body = await readBody(request);
     return Response.json(
       await mutateRoom(
