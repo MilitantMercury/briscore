@@ -32,7 +32,7 @@ Realtime pubblica gli aggiornamenti della tabella `rooms`; il client riceve l'ev
 
 Gli invitati possono entrare anche come ospiti tramite Supabase Anonymous Auth. Un ospite sceglie il nome al tavolo, partecipa in tempo reale e occupa un posto marcato come bot: non entra nella classifica globale e non conserva uno storico personale. Gli account registrati mantengono invece profilo, storico, avatar e corone.
 
-Per abilitarlo nel progetto: Dashboard Supabase → Authentication → Sign In / Providers → Anonymous Sign-Ins. L’abilitazione è necessaria solo per il pulsante “Continua come ospite”; gli altri provider non cambiano.
+Per abilitarlo nel progetto: Dashboard Supabase → Authentication → Sign In / Providers → Anonymous Sign-Ins. Attiva anche CAPTCHA protection, scegli Cloudflare Turnstile e inserisci il secret key. Configura la site key pubblica in Vercel come `NEXT_PUBLIC_TURNSTILE_SITE_KEY`. L’abilitazione è necessaria solo per il pulsante “Continua come ospite”; gli altri provider non cambiano.
 
 ## Auth, redirect e Storage
 
