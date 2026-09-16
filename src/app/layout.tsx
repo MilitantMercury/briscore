@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AppHeader } from "@/components/app-header";
+import { Analytics } from "@vercel/analytics/next";
 import packageInfo from "../../package.json";
 import "./globals.css";
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({
         <span className="app-version" aria-label="Versione app">
           v{packageInfo.version}
         </span>
+        <Analytics />
       </body>
     </html>
   );
