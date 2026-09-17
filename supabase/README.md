@@ -36,7 +36,7 @@ Per abilitarlo nel progetto: Dashboard Supabase → Authentication → Sign In /
 
 ## Auth, redirect e Storage
 
-L'app richiede account reali; Anonymous Sign-Ins non sono usati. Configura magic link e i provider OAuth desiderati in Supabase Authentication. In **URL Configuration** inserisci il dominio Vercel effettivo e gli URL locali di sviluppo, ad esempio `http://localhost:3000/**`.
+Gli ospiti usano Anonymous Sign-Ins per partecipare tramite invito; creazione partita e classifica richiedono un account permanente. Configura magic link e i provider OAuth desiderati in Supabase Authentication. In **URL Configuration** inserisci il dominio Vercel effettivo e gli URL locali di sviluppo, ad esempio `http://localhost:3000/**`.
 
 Le immagini avatar usano il bucket `avatars`; URL e publishable key sono sufficienti per browser e API utente. Non esporre mai service-role key o password come variabili `NEXT_PUBLIC`.
 
@@ -58,3 +58,9 @@ I secret richiesti sono `SUPABASE_ACCESS_TOKEN` e `SUPABASE_DB_PASSWORD`. Il wor
 - [Database functions](https://supabase.com/docs/guides/database/functions)
 - [Realtime Postgres changes](https://supabase.com/docs/guides/realtime/postgres-changes)
 - [Supabase Cron](https://supabase.com/docs/guides/cron)
+
+## Accesso ospite: errore 401 dopo il CAPTCHA
+
+La migrazione 20260917110000_guest_room_permissions separa require_room_user da require_account: soltanto lettura stanza, ingresso con invito e proposte accettano sessioni anonime. Restano obbligatori membership, posto giocatore per le proposte e controllo host per le modifiche. Il ruolo anon senza sessione non ha accesso alle RPC. Un retry client non risolve il rifiuto SQL: verificare che la migrazione sia applicata.
+
+Il test isolato tests/guest-permissions.cjs usa @electric-sql/pglite (installabile in una cartella temporanea e risolvibile tramite NODE_PATH). Esegue la migrazione in PostgreSQL embedded e verifica ingresso, lettura, proposta, invito errato, azioni host, spettatori e assenza di sessione; snapshot e validazione delle mani sono stub. Non sostituisce il test end-to-end Supabase/Turnstile.
