@@ -164,7 +164,7 @@ export function AuthPanel() {
             <input id="guest-name" value={guestName} maxLength={30} required placeholder="Il tuo nome" onChange={(event) => setGuestName(event.target.value)} />
           </label>
           {turnstileSiteKey ? (
-            <Turnstile key={`guest-captcha-${captchaVersion}`} siteKey={turnstileSiteKey} options={{ theme: "dark", language: "it" }} onSuccess={setCaptchaToken} onExpire={() => { setCaptchaToken(""); setCaptchaVersion((version) => version + 1); }} onError={() => { setCaptchaToken(""); setCaptchaVersion((version) => version + 1); }} />
+            <Turnstile key={`guest-captcha-${captchaVersion}`} siteKey={turnstileSiteKey} options={{ theme: "dark", language: "it" }} onSuccess={setCaptchaToken} onExpire={() => { setCaptchaToken(""); setCaptchaVersion((version) => version + 1); }} onError={() => { setCaptchaToken(""); setMessage("Verifica di sicurezza non disponibile. Attendi il nuovo tentativo o ricarica la pagina."); }} />
           ) : <small className="info">Accesso ospite non ancora configurato.</small>}
           <button className="secondary full" disabled={busy || !captchaToken}>Continua come ospite</button>
           <small className="muted">L’ospite non entra nella classifica globale e non conserva uno storico personale.</small>
