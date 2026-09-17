@@ -1,0 +1,40 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Standalone CJS harness resolves PGlite from temporary NODE_PATH. */
+const {PGlite}=require('@electric-sql/pglite');
+const fs=require('fs');
+(async()=>{
+const db=new PGlite();
+await db.exec(`create role anon; create role authenticated; create schema auth; create schema briscore_private;
+create function auth.uid() returns uuid language sql as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
+create function auth.jwt() returns jsonb language sql as $$ select '{"is_anonymous":true}'::jsonb $$;
+create table auth.users(id uuid primary key,is_anonymous boolean,raw_user_meta_data jsonb,email text);
+create table public.rooms(id uuid primary key,host_id uuid,invite_token uuid,revision bigint default 0,updated_at timestamptz,status text default 'active',round_completed boolean default false,current_round int default 1,ended_at timestamptz);
+create table public.players(id uuid primary key,room_id uuid,seat int,name text,is_bot boolean);
+create table public.room_members(room_id uuid,user_id uuid,player_id uuid);
+create table public.hands(id uuid,room_id uuid);
+create table public.proposals(id uuid,room_id uuid,author_id uuid,kind text,hand_payload jsonb,base_hand jsonb,status text default 'pending');
+create function briscore_private.snapshot(uuid) returns jsonb language sql as $$ select jsonb_build_object('id',$1) $$;
+create function briscore_private.is_member(uuid) returns boolean language sql as $$ select exists(select 1 from public.room_members where room_id=$1 and user_id=auth.uid()) $$;
+create function briscore_private.validate_hand(uuid,jsonb) returns jsonb language sql as $$ select $2 $$;
+create function briscore_private.hand_json(public.hands) returns jsonb language sql as $$ select '{}'::jsonb $$;
+`);
+const original=fs.readFileSync('supabase/migrations/20260914010000_authenticated_rooms.sql','utf8');
+await db.exec(original.match(/create function briscore_private.require_account[\s\S]*?end \$\$;/)[0]);
+await db.exec(fs.readFileSync('supabase/migrations/20260917110000_guest_room_permissions.sql','utf8'));
+const guest='11111111-1111-4111-8111-111111111111',host='22222222-2222-4222-8222-222222222222',room='33333333-3333-4333-8333-333333333333',token='44444444-4444-4444-8444-444444444444',player='55555555-5555-4555-8555-555555555555';
+await db.exec(`insert into auth.users values('${guest}',true,'{"display_name":"Guest"}',null); insert into rooms(id,host_id,invite_token) values('${room}','${host}','${token}'); insert into players values('${player}','${room}',2,'Free',true); set request.jwt.claim.sub='${guest}';`);
+async function denied(sql,code){try{await db.query(sql);throw Error('Expected rejection: '+sql)}catch(e){if(e.code!==code)throw e;}}
+await denied('select briscore_private.require_account()','PT401');
+await denied(`select briscore_get_room('${room}')`,'PT403');
+await denied(`select briscore_enter_room('${room}','${host}')`,'PT404');
+await db.query(`select briscore_enter_room('${room}','${token}')`);
+await db.query(`select briscore_get_room('${room}')`);
+const p=await db.query('select name,is_bot from players');if(p.rows[0].name!=='Guest'||!p.rows[0].is_bot)throw Error('Guest seat not marked bot');
+await denied(`select briscore_mutate('${room}',1,'reset','{}')`,'PT403');
+await db.query(`select briscore_mutate('${room}',1,'propose','{"kind":"add","hand":{"id":"${token}"}}')`);
+const proposals=await db.query('select * from proposals');if(proposals.rows.length!==1)throw Error('Proposal missing');
+await db.exec('update room_members set player_id=null');
+await denied(`select briscore_mutate('${room}',2,'propose','{}')`,'PT403');
+await db.exec("set request.jwt.claim.sub=''");await denied(`select briscore_get_room('${room}')`,'PT401');
+const acl=await db.query("select has_function_privilege('anon','public.briscore_enter_room(uuid,uuid)','execute') as allowed");if(acl.rows[0].allowed)throw Error('Unauthenticated RPC grant');
+console.log('PASS: migration executes; guest read/join/propose; bad invite, nonmember, host action, spectator and unauthenticated denied; permanent account guard preserved. Snapshot/hand validation are test stubs.');await db.close();
+})().catch(e=>{console.error(e);process.exit(1)});
