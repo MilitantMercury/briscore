@@ -16,7 +16,7 @@ export default function MyGamesPage() {
     </section>
     {loading && <p className="games-status muted" role="status">Mescoliamo le tue partite…</p>}
     {error && <p className="games-status info" role="status">{error}</p>}
-    {!loading && !error && !games.some((game) => game.status !== "cancelled") && <section className="empty-deck"><span>DENARI · COPPE · SPADE · BASTONI</span><h2>Il tuo mazzo è ancora vuoto.</h2><p>Crea una partita e qui ritroverai tutti i tavoli.</p><Link className="primary" href="/">Crea una partita →</Link></section>}
+    {!loading && !error && !games.some((game) => game.status !== "cancelled") && <section className="empty-deck"><span>DENARI · COPPE · SPADE · BASTONI</span><h2>Il tuo mazzo è ancora vuoto.</h2><p>Crea una partita e qui ritroverai tutti i tavoli.</p><Link className="primary" href="/?new=1">Crea una partita →</Link></section>}
     {!loading && !error && games.some((game) => game.status !== "cancelled") && <div className="game-filters" role="group" aria-label="Filtra le partite">
       {(["all","active","completed"] as const).map((item) => {
         const labels = { all:"Tutte", active:"In diretta", completed:"Concluse" };

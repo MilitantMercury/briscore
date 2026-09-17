@@ -81,6 +81,17 @@ export function useGame() {
         /* Resume is optional. */
       }
       const params = new URLSearchParams(window.location.search);
+      if (params.get("new") === "1") {
+        try {
+          localStorage.removeItem(storageKey + userId);
+          localStorage.removeItem(pendingRoomKey);
+        } catch { /* Resume storage is optional. */ }
+        setCredentials(null);
+        setRoom(null);
+        setReady(true);
+        window.history.replaceState(null, "", "/");
+        return;
+      }
       const id = params.get("room");
       let pending: RoomReference | null = null;
       try {
@@ -124,6 +135,21 @@ export function useGame() {
     return () => clearTimeout(timer);
   }, [message]);
   const acceptRoom = useCallback((next: Room) => {
+    if (next.status === "cancelled") {
+      try {
+        const saved = JSON.parse(localStorage.getItem(storageKey + authenticatedUserId.current) || "null");
+        if (saved?.id === next.id) localStorage.removeItem(storageKey + authenticatedUserId.current);
+        const pending = JSON.parse(localStorage.getItem(pendingRoomKey) || "null");
+        if (pending?.id === next.id) localStorage.removeItem(pendingRoomKey);
+      } catch { /* Resume storage is optional. */ }
+      setCredentials(null);
+      setRoom(null);
+      setEditorState(null);
+      setEditorRevision(null);
+      setMessage("Partita annullata. Puoi creare una nuova partita.");
+      window.history.replaceState(null, "", "/");
+      return;
+    }
     setRoom((current) =>
       !current || current.id !== next.id || next.revision >= current.revision
         ? next
