@@ -68,3 +68,5 @@ Ogni push su `main` esegue lint, test, typecheck e build su GitHub Actions. La p
 Vercel pubblica automaticamente `main`. Dependabot apre aggiornamenti settimanali per npm e GitHub Actions. Grafana, integrato in Supabase, è il punto di osservazione per database, API e Auth; Supabase Cron è disponibile per futuri job di manutenzione, senza job automatici attivi al momento.
 
 Consulta [CONTRIBUTING.md](CONTRIBUTING.md) per il flusso di sviluppo e [SECURITY.md](SECURITY.md) per le segnalazioni di sicurezza.
+
+Quando una partita viene annullata, il tavolo corrente viene chiuso e il riferimento di ripristino viene rimosso dal browser. Le partite annullate restano escluse da Le mie partite. Il collegamento Crea una partita apre /?new=1 per ignorare il ripristino dell'ultimo tavolo.
