@@ -70,3 +70,5 @@ Vercel pubblica automaticamente `main`. Dependabot apre aggiornamenti settimanal
 Consulta [CONTRIBUTING.md](CONTRIBUTING.md) per il flusso di sviluppo e [SECURITY.md](SECURITY.md) per le segnalazioni di sicurezza.
 
 Quando una partita viene annullata, il tavolo corrente viene chiuso e il riferimento di ripristino viene rimosso dal browser. Le partite annullate restano escluse da Le mie partite. Il collegamento Crea una partita apre /?new=1 per ignorare il ripristino dell'ultimo tavolo.
+
+Su dispositivi touch il tema conserva lo sfondo e le cornici avatar ma disattiva le animazioni decorative continue e le sfocature a tutto schermo. Il modale Aggiungi mano scorre internamente entro il viewport dinamico e le safe area. Gli errori di rete Turnstile non rimontano immediatamente il widget: resta attivo il retry gestito dalla libreria.
