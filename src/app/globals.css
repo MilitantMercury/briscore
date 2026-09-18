@@ -1767,6 +1767,11 @@ dialog:has(.dealer-form) { width:min(660px,calc(100% - 24px)); padding:0; overfl
 .game-hud::before { right: 18px; bottom: -18px; font-size: clamp(55px, 9vw, 104px); }
 .game-hud::after { top: 11px; right: 20px; font-size: 8px; }
 .game-hud .secondary { min-height: 40px; }
+.game-heading-actions { display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+.game-code { display:grid; gap:1px; min-height:40px; padding:5px 13px; border:1px solid #d9ff956b; border-radius:9px; background:#07130eb8; color:#eff6df; text-align:left; }
+.game-code span { color:#b6c6a8; font-size:9px; letter-spacing:1px; }
+.game-code b { color:var(--lime); font-size:16px; letter-spacing:2px; line-height:1.1; }
+.game-code:hover { border-color:var(--lime); background:#203522; }
 .table-stage { position: relative; margin-top: 6px; }
 .table-stage .live-table { min-height: 402px; padding: 37px 42px 86px; }
 .table-stage .player-cards { gap: 17px; }

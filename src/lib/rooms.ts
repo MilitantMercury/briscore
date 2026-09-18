@@ -31,12 +31,12 @@ function hydrate(data: Room): Room {
   };
 }
 export async function createRoom(auth: AuthContext) {
-  return hydrate(
-    await rpc(auth, "briscore_create_room", {}),
-  );
+  const room = hydrate(await rpc(auth, "briscore_create_room", {}));
+  return { ...room, publicCode: await rpc(auth, "briscore_room_code", { p_room: room.id }) as string };
 }
 export async function getRoom(auth: AuthContext, id: string) {
-  return hydrate(await rpc(auth, "briscore_get_room", { p_room: id }));
+  const room = hydrate(await rpc(auth, "briscore_get_room", { p_room: id }));
+  return { ...room, publicCode: await rpc(auth, "briscore_room_code", { p_room: id }) as string };
 }
 export async function getInvite(
   auth: AuthContext,
