@@ -14,6 +14,7 @@ L'app è realizzata con Next.js App Router, React, TypeScript e Supabase (Auth, 
 - Avatar, immagine personale ed effetti visivi; corone per i primi tre della classifica globale.
 - Posti senza account classificati come bot: partecipano ai conti del tavolo ma non entrano in classifica, corone o statistiche persistenti.
 - Pagina delle partite, classifica globale, profilo e riepilogo finale.
+- Ogni partita ha un codice pubblico di otto caratteri, condivisibile per trovarla dalla pagina Le mie partite.
 
 ## Punteggi
 

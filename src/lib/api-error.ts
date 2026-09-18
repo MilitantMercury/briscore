@@ -13,6 +13,7 @@ const messages: Record<string, string> = {
     "La mano non è valida. Controlla chiamante, chiamato, esito e capotto.",
   INVALID_PLAYERS: "Inserisci cinque nomi diversi, da 1 a 30 caratteri.",
   INVALID_ACTION: "Operazione non valida.",
+  ROOM_NOT_FOUND: "Partita non trovata.",
   HAND_NOT_FOUND: "Mano non disponibile o già inserita.",
   RATE_LIMIT: "Troppe richieste. Attendi prima di riprovare.",
   SERVER_CONFIG: "Supabase non è configurato sul server.",

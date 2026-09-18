@@ -1,6 +1,7 @@
 import type { Hand, Session } from "./game";
 export type Proposal = {
   id: string;
+  publicCode?: string;
   author: string;
   authorId: string;
   kind: "add" | "edit" | "delete";
