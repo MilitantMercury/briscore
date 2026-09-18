@@ -762,12 +762,15 @@ footer > span:last-child {
 .profile-page input[readonly] { color: var(--muted); }
 .games-list { display: grid; gap: 10px; margin-top: 28px; }
 .games-list .secondary { text-align: left; }
-.game-search { display: grid; gap: 8px; margin: 26px 0 30px; padding: 18px; border: 1px solid var(--border); border-radius: 12px; background: #181d17; }
-.game-search label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1.3px; }
-.game-search > div { display: flex; gap: 10px; }
-.game-search input { flex: 1; min-width: 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
-.game-search button { white-space: nowrap; }
+.game-search { display: grid; gap: 9px; margin: 26px 0 30px; padding: 20px; border: 1px solid #ead9933d; border-radius: 14px; background: linear-gradient(135deg,#18251b,#111b15); box-shadow: inset 0 1px #ffffff08; }
+.game-search label { font-size: 12px; color: #d9e1cf; text-transform: uppercase; letter-spacing: 1.3px; font-weight: 700; }
+.game-search > div { display: flex; align-items: stretch; gap: 10px; }
+.game-search input { flex: 1; min-width: 0; height: 50px; box-sizing: border-box; padding: 0 15px; border: 1px solid #d9ff9570; border-radius: 10px; background: #07130ed9; color: #f3f5eb; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+.game-search input::placeholder { color: #aab69f; opacity: 1; text-transform: none; letter-spacing: 0; font-weight: 400; }
+.game-search input:focus { border-color: var(--lime); box-shadow: 0 0 0 3px #d9ff9526; }
+.game-search button { min-height: 50px; padding: 0 22px; white-space: nowrap; }
 .game-search p { margin: 0; font-size: 12px; }
+@media (max-width:700px) { .game-search > div { flex-direction: column; }.game-search button { width: 100%; } }
 .summary-page h1 { margin: 8px 0 10px; font-size: 42px; letter-spacing: -2px; }
 .summary-list { display: grid; gap: 0; margin-top: 28px; }
 .summary-row { display: flex; justify-content: space-between; padding: 16px 12px; border-bottom: 1px solid var(--border); }
