@@ -43,7 +43,7 @@ export function AuthPanel() {
     try {
       localStorage.setItem(
         pendingRoomKey,
-        JSON.stringify({ id, inviteToken: params.get("invite") || undefined }),
+        JSON.stringify({ id, inviteToken: params.get("invite") || undefined, publicCode: params.get("code") || undefined }),
       );
     } catch {
       /* The URL remains the fallback when storage is unavailable. */

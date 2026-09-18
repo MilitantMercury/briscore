@@ -1,5 +1,6 @@
 import type { AuthContext } from "./auth-server";
 import { ApiError } from "./api-error";
+import { createClient } from "@supabase/supabase-js";
 import {
   calculateHandScore,
   parseSession,
@@ -101,8 +102,20 @@ export async function listRooms(auth: AuthContext) {
   return data;
 }
 export async function findRoom(auth: AuthContext, code: string) {
-  if (!/^[A-Z2-9]{8}$/.test(code)) throw new ApiError("ROOM_NOT_FOUND", 404);
-  return rpc(auth, "briscore_find_room", { p_code: code });
+  const normalized = code.replace(/[\s-]/g, "").toUpperCase();
+  if (!/^[A-Z2-9]{8}$/.test(normalized)) throw new ApiError("ROOM_NOT_FOUND", 404);
+  return rpc(auth, "briscore_find_room", { p_code: normalized });
+}
+export async function findPublicRoom(code: string) {
+  const normalized = code.replace(/[\s-]/g, "").toUpperCase();
+  if (!/^[A-Z2-9]{8}$/.test(normalized)) throw new ApiError("ROOM_NOT_FOUND", 404);
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) throw new ApiError("SERVER_CONFIG", 503);
+  const client = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { data, error } = await client.rpc("briscore_find_room", { p_code: normalized });
+  if (error) throw ApiError.fromDatabase(error);
+  return data;
 }
 export async function leaderboard(auth: AuthContext) {
   return rpc(auth, "briscore_leaderboard", {});

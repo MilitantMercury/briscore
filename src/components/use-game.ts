@@ -101,7 +101,7 @@ export function useGame() {
       }
       if (!active) return;
       const reference = id
-        ? { id, inviteToken: params.get("invite") || undefined }
+        ? { id, inviteToken: params.get("invite") || undefined, publicCode: params.get("code") || undefined }
         : pending || saved;
       if (reference && /^[a-f0-9-]{36}$/i.test(reference.id)) {
         setCredentials(reference);
@@ -198,6 +198,7 @@ export function useGame() {
     }
     const query = new URLSearchParams({ room: next.id });
     if (next.inviteToken) query.set("invite", next.inviteToken);
+    if (next.publicCode) query.set("code", next.publicCode);
     window.history.replaceState(null, "", "?" + query.toString());
   }
   async function start() {

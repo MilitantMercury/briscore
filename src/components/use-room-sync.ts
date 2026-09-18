@@ -4,7 +4,7 @@ import { supabase } from "@/lib/supabase-browser";
 import { api, RequestError } from "@/lib/api-client";
 import type { Room } from "@/lib/room-types";
 
-export type RoomReference = { id: string; inviteToken?: string };
+export type RoomReference = { id: string; inviteToken?: string; publicCode?: string };
 export function useRoomSync(
   reference: RoomReference | null,
   userId: string | null,
@@ -40,14 +40,14 @@ export function useRoomSync(
         if (
           error instanceof RequestError &&
           error.status === 403 &&
-          reference.inviteToken
+          reference.inviteToken || reference.publicCode
         ) {
           try {
             const room = await api<Room>(
               `/api/rooms/${reference.id}/join`,
               {
                 method: "POST",
-                body: JSON.stringify({ inviteToken: reference.inviteToken }),
+                body: JSON.stringify(reference.inviteToken ? { inviteToken: reference.inviteToken } : { code: reference.publicCode }),
               },
             );
             if (active) {
