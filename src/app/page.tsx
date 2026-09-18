@@ -10,6 +10,7 @@ import { useGame } from "@/components/use-game";
 import { calls, formatScore } from "@/lib/game";
 export default function Home() {
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
+  const [codeCopied, setCodeCopied] = useState(false);
   const {
     room,
     credentials,
@@ -88,9 +89,10 @@ export default function Home() {
                 </span>
                 <h1>Partita in corso<span className="lime">.</span></h1>
               </div>
-              <button className="secondary" onClick={share}>
-                ↗ Invita giocatori
-              </button>
+              <div className="game-heading-actions">
+                {host && room.publicCode && <button className="game-code" onClick={async () => { await navigator.clipboard.writeText(room.publicCode!); setCodeCopied(true); setTimeout(() => setCodeCopied(false), 2200); }}><span>CODICE PARTITA</span><b>{codeCopied ? "Copiato!" : room.publicCode}</b></button>}
+                <button className="secondary" onClick={share}>↗ Invita giocatori</button>
+              </div>
             </div>
             <div className="identity-bar live-identity briscola-ribbon">
               <p>
