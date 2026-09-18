@@ -34,7 +34,7 @@ export function NewSession({
           </span>
         </div>
         <div className="table-note">
-          <span>BASTONI</span>
+          <span className="suit-mark suit-bastoni" title="Bastoni" aria-label="Bastoni">♣</span>
           <p>La prossima mano può cambiare tutto.</p>
         </div>
       </section>

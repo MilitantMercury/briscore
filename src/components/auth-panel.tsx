@@ -114,7 +114,7 @@ export function AuthPanel() {
         <span className="eyebrow">ENTRA AL TAVOLO</span>
         <h1>La tua partita<br />ti aspetta<span className="lime">.</span></h1>
         <p>Accedi una volta. Ritrovi il tuo profilo, le partite e la classifica su ogni dispositivo.</p>
-        <div className="auth-suits" aria-hidden="true"><span>DENARI</span><span>COPPE</span><span>SPADE</span><span>BASTONI</span></div>
+        <div className="auth-suits" aria-label="Semi italiani"><span className="suit-denari" title="Denari">♦</span><span className="suit-coppe" title="Coppe">♥</span><span className="suit-spade" title="Spade">♠</span><span className="suit-bastoni" title="Bastoni">♣</span></div>
       </section>
     <section className="panel setup-panel auth-panel deal-card">
       <span className="eyebrow">IL TUO ACCOUNT</span>

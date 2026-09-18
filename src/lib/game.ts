@@ -21,12 +21,12 @@ export type Session = {
 };
 export const calls: Record<
   CallType,
-  { label: string; multiplier: number; description: string }
+  { label: string; multiplier: number; description: string; pointsLabel: string }
 > = {
-  normal: { label: "Normale", multiplier: 1, description: "Meno di 70" },
-  double: { label: "70–79", multiplier: 2, description: "Si raddoppia" },
-  triple: { label: "80+", multiplier: 3, description: "Si triplica" },
-  carichi: { label: "Carichi", multiplier: 1, description: "Uno contro tutti" },
+  normal: { label: "Normale", multiplier: 1, description: "Meno di 70", pointsLabel: "±1 punto" },
+  double: { label: "70–79", multiplier: 2, description: "Si raddoppia", pointsLabel: "±2 punti" },
+  triple: { label: "80+", multiplier: 3, description: "Si triplica", pointsLabel: "±3 punti" },
+  carichi: { label: "Carichi", multiplier: 1, description: "Uno contro tutti", pointsLabel: "±4 punti" },
 };
 export function validatePlayers(players: Player[]) {
   if (players.length !== 5 || players.some((p) => !p.id || !p.name.trim()))

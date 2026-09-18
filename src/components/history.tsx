@@ -12,32 +12,34 @@ export function History({
   onEdit,
   onDelete,
   busy,
+  newestFirst = false,
 }: {
   session: Session;
   onEdit: (hand: Hand) => void;
   onDelete: (hand: Hand) => void;
   busy: boolean;
+  newestFirst?: boolean;
 }) {
   const [expandedId, setExpandedId] = useState<string | null>(
     session.hands.at(-1)?.id ?? null,
   );
   return (
     <>
-      {session.hands.map((hand, i) => {
+      {(newestFirst ? session.hands.map((hand, index) => ({ hand, index })).reverse() : session.hands.map((hand, index) => ({ hand, index }))).map(({ hand, index }) => {
         const expanded = expandedId === hand.id;
         const caller = session.players.find((p) => p.id === hand.callerId)?.name;
         const called = session.players.find((p) => p.id === hand.calledPlayerId)?.name;
         return (
         <article className={`history-hand ${expanded ? "is-expanded" : "is-collapsed"}`} key={hand.id}>
           <span className="hand-suit" aria-hidden="true">
-            {["DENARI", "COPPE", "SPADE", "BASTONI"][i % 4]}
+            {["♦", "♥", "♠", "♣"][index % 4]}
           </span>
           <button
             className="history-toggle"
             onClick={() => setExpandedId(expanded ? null : hand.id)}
             aria-expanded={expanded}
           >
-            <span className="hand-number">Mano #{i + 1}</span>
+            <span className="hand-number">Mano #{index + 1}</span>
             <span className="hand-summary">
               <b>{caller}</b>{hand.callType === "carichi" ? " gioca da solo" : <> chiama <b>{called}</b></>}
             </span>

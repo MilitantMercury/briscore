@@ -100,7 +100,7 @@ export function HandForm({
               }}
             >
               <span>{calls[t].label}</span>
-              <small>×{calls[t].multiplier}</small>
+              <small>{calls[t].pointsLabel}</small>
             </button>
           ))}
         </div>

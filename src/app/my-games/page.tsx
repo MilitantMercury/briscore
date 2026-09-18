@@ -16,7 +16,7 @@ export default function MyGamesPage() {
     </section>
     {loading && <p className="games-status muted" role="status">Mescoliamo le tue partite…</p>}
     {error && <p className="games-status info" role="status">{error}</p>}
-    {!loading && !error && !games.some((game) => game.status !== "cancelled") && <section className="empty-deck"><span>DENARI · COPPE · SPADE · BASTONI</span><h2>Il tuo mazzo è ancora vuoto.</h2><p>Crea una partita e qui ritroverai tutti i tavoli.</p><Link className="primary" href="/?new=1">Crea una partita →</Link></section>}
+    {!loading && !error && !games.some((game) => game.status !== "cancelled") && <section className="empty-deck"><span className="suit-row" aria-label="Semi italiani"><i className="suit-denari">♦</i><i className="suit-coppe">♥</i><i className="suit-spade">♠</i><i className="suit-bastoni">♣</i></span><h2>Il tuo mazzo è ancora vuoto.</h2><p>Crea una partita e qui ritroverai tutti i tavoli.</p><Link className="primary" href="/?new=1">Crea una partita →</Link></section>}
     {!loading && !error && games.some((game) => game.status !== "cancelled") && <div className="game-filters" role="group" aria-label="Filtra le partite">
       {(["all","active","completed"] as const).map((item) => {
         const labels = { all:"Tutte", active:"In diretta", completed:"Concluse" };
@@ -29,7 +29,7 @@ export default function MyGamesPage() {
         const status = g.status || "active";
         const label = status === "completed" ? "Conclusa" : status === "cancelled" ? "Annullata" : "In diretta";
         const action = status === "active" ? "Entra al tavolo" : "Vedi tavolo";
-        const suits = ["DENARI","COPPE","SPADE","BASTONI"];
+        const suits = ["♦","♥","♠","♣"];
         return <Link className={`game-card game-${status} ${status === "active" ? "game-live" : ""}`} key={g.id} href={`/?room=${g.id}`}>
           <span className="game-card-number">{String(index + 1).padStart(2,"0")}</span>
           <span className="game-card-suit">{suits[index % suits.length]}</span>

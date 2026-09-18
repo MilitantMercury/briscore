@@ -1372,7 +1372,7 @@ body::after {
   letter-spacing: -.08em;
 }
 .briscola-hero::after {
-  content: "DENARI  ·  COPPE  ·  SPADE  ·  BASTONI";
+  content: "♦  ♥  ♠  ♣";
   position: absolute;
   top: 14px;
   right: 28px;
@@ -1441,7 +1441,7 @@ body::after {
 .history-hand .section-heading { padding-right:70px; }
 .table-mantra span { color:#d9c168; font-size:9px; font-weight:800; }
 footer { border-top: 1px solid #e9d99324; position:relative; }
-footer::before { content:"DENARI · COPPE · SPADE · BASTONI"; position:absolute; left:50%; transform:translateX(-50%); top:17px; color:#d3bd743f; font-size:8px; font-weight:800; letter-spacing:1.7px; white-space:nowrap; }
+footer::before { content:"♦  ♥  ♠  ♣"; position:absolute; left:50%; transform:translateX(-50%); top:17px; color:#d3bd743f; font-size:8px; font-weight:800; letter-spacing:1.7px; white-space:nowrap; }
 .live-identity { background: #dfffb00c; border-color: #dfffb033; }
 .live-table {
   position: relative;
@@ -1830,3 +1830,20 @@ body:has(dialog[open])::before, body:has(dialog[open])::after,
 body:has(dialog[open]) .effect-frame, body:has(dialog[open]) .table-glow {
   animation-play-state:paused;
 }
+
+.hand-detail .point-grid > div { min-width:0; min-height:72px; display:flex; flex-direction:column; justify-content:space-between; }
+.hand-detail .point-grid span { display:-webkit-box; min-height:2.7em; overflow:hidden; overflow-wrap:anywhere; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-height:1.35; }
+.hand-detail .point-grid strong { margin-top:auto; line-height:1.1; font-variant-numeric:tabular-nums; }
+
+/* Suit marks: the symbols carry the visual language, while titles preserve their meaning. */
+.suit-mark, .suit-row i, .auth-suits span { font-family: Georgia, serif; font-style:normal; }
+.suit-denari { color:#e4c15c; }
+.suit-coppe { color:#e87b76; }
+.suit-spade { color:#9ab7d8; }
+.suit-bastoni { color:#b8df72; }
+.game-card-suit { font-family:Georgia,serif; font-size:24px; letter-spacing:0; }
+.suit-row { display:flex; justify-content:center; gap:13px; font-size:14px; letter-spacing:0; }
+.suit-row i { font-size:16px; }
+.auth-suits { display:flex; gap:22px; font-size:28px; letter-spacing:0; }
+.hand-suit { font-family:Georgia,serif; font-size:18px; letter-spacing:0; }
+.table-mantra span { font-family:Georgia,serif; font-size:17px; letter-spacing:0; }

@@ -179,9 +179,10 @@ export default function Home() {
                       </p>
                     </div>
                   ) : (
-                    <div className={`history-list ${oldest ? "" : "reverse"}`}>
+                    <div className="history-list">
                       <History
                         session={room.session}
+                        newestFirst={!oldest}
                         busy={busy || !online}
                         onEdit={(h) => {
                           setMessage("");
@@ -203,7 +204,7 @@ export default function Home() {
                         {c.label}
                         <small>{c.description}</small>
                       </span>
-                      <b>×{c.multiplier}</b>
+                      <b>{c.pointsLabel}</b>
                     </div>
                   ))}
                   <p>
