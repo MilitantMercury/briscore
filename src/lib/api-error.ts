@@ -26,7 +26,7 @@ export class ApiError extends Error {
     super(messages[code] || "Operazione non riuscita.");
   }
   static fromDatabase(error: { code?: string; message: string }) {
-    const status = error.code?.startsWith("PT")
+    const status = error.message === "ROOM_NOT_FOUND" ? 404 : error.code?.startsWith("PT")
       ? Number(error.code.slice(2))
       : error.code === "23505"
         ? 409
