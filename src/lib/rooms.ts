@@ -104,7 +104,12 @@ export async function listRooms(auth: AuthContext) {
 export async function findRoom(auth: AuthContext, code: string) {
   const normalized = code.replace(/[\s-]/g, "").toUpperCase();
   if (!/^[A-Z2-9]{8}$/.test(normalized)) throw new ApiError("ROOM_NOT_FOUND", 404);
-  return rpc(auth, "briscore_find_room", { p_code: normalized });
+  return rpc(auth, "briscore_resolve_room_code", { p_code: normalized });
+}
+export async function enterRoomByCode(auth: AuthContext, code: string) {
+  const normalized = code.replace(/[\s-]/g, "").toUpperCase();
+  if (!/^[A-Z2-9]{8}$/.test(normalized)) throw new ApiError("ROOM_NOT_FOUND", 404);
+  return hydrate(await rpc(auth, "briscore_enter_room_by_code", { p_code: normalized }));
 }
 export async function findPublicRoom(code: string) {
   const normalized = code.replace(/[\s-]/g, "").toUpperCase();
