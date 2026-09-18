@@ -1847,3 +1847,31 @@ body:has(dialog[open]) .effect-frame, body:has(dialog[open]) .table-glow {
 .auth-suits { display:flex; gap:22px; font-size:28px; letter-spacing:0; }
 .hand-suit { font-family:Georgia,serif; font-size:18px; letter-spacing:0; }
 .table-mantra span { font-family:Georgia,serif; font-size:17px; letter-spacing:0; }
+@media (max-width: 540px) {
+  /* On phones the live table stays fully visible without a horizontal carousel. */
+  .player-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    overflow: visible;
+    padding: 4px 0 8px;
+  }
+  .player-card {
+    flex: none;
+    min-height: 158px;
+    padding: 13px 8px 10px;
+    border-radius: 14px;
+    scroll-snap-align: none;
+  }
+  .player-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: calc(50% - 4.5px);
+    justify-self: center;
+  }
+  .player-card .player-avatar.has-image.avatar-large {
+    width: 54px;
+    height: 64px;
+  }
+  .player-card-name b { font-size: 13px; }
+  .player-card strong { font-size: 26px; }
+}
