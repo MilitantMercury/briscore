@@ -28,7 +28,9 @@ Le mani usano input immutabili; punti e classifica vengono ricalcolati. Il datab
 
 Le tabelle sono leggibili tramite RLS solo dai membri. Le scritture dirette sono revocate: il client usa RPC con JWT utente. Le funzioni interne in `briscore_private` hanno `search_path` vuoto e privilegi non eseguibili dagli utenti.
 
-Realtime pubblica gli aggiornamenti della tabella `rooms`; il client riceve l'evento e ricarica uno snapshot autorizzato. I delta delle mani non vengono diffusi come eventi indipendenti.
+Realtime pubblica gli aggiornamenti della tabella `rooms`; il client riceve l’evento e ricarica uno snapshot autorizzato. I delta delle mani non vengono diffusi come eventi indipendenti.
+
+Le partite hanno anche un `public_code` di otto caratteri, generato senza caratteri ambigui. La RPC `briscore_find_room` risolve il codice nell’UUID e nell’invito necessario per entrare nella partita.
 
 Gli invitati possono entrare anche come ospiti tramite Supabase Anonymous Auth. Un ospite sceglie il nome al tavolo, partecipa in tempo reale e occupa un posto marcato come bot: non entra nella classifica globale e non conserva uno storico personale. Gli account registrati mantengono invece profilo, storico, avatar e corone.
 
