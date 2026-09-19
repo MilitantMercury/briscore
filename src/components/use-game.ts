@@ -25,6 +25,7 @@ export function useGame() {
   const [showStats, setShowStats] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [spectatorCount, setSpectatorCount] = useState(0);
   const [authReady, setAuthReady] = useState(false);
   const authenticatedUserId = useRef<string | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -161,9 +162,11 @@ export function useGame() {
   useRoomSync(
     credentials,
     userId,
+    playerId ?? null,
     acceptRoom,
     setOnline,
     setMessage,
+    setSpectatorCount,
   );
   useEffect(() => {
     if (editor && !dialog.current?.open) dialog.current?.showModal();
@@ -361,6 +364,7 @@ export function useGame() {
     userId,
     playerId,
     isAnonymous,
+    spectatorCount,
     authReady,
     dialog,
     host,

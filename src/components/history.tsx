@@ -13,12 +13,14 @@ export function History({
   onDelete,
   busy,
   newestFirst = false,
+  readOnly = false,
 }: {
   session: Session;
   onEdit: (hand: Hand) => void;
   onDelete: (hand: Hand) => void;
   busy: boolean;
   newestFirst?: boolean;
+  readOnly?: boolean;
 }) {
   const [expandedId, setExpandedId] = useState<string | null>(
     session.hands.at(-1)?.id ?? null,
@@ -65,14 +67,14 @@ export function History({
                   </div>
                 ))}
               </div>
-              <div className="hand-actions">
+              {!readOnly && <div className="hand-actions">
                 <button className="hand-action hand-edit" disabled={busy} onClick={() => onEdit(hand)}>
                   ✎ Modifica
                 </button>
                 <button className="hand-action hand-delete" disabled={busy} onClick={() => onDelete(hand)}>
                   × Elimina
                 </button>
-              </div>
+              </div>}
             </div>
           )}
         </article>

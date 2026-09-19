@@ -1891,3 +1891,24 @@ body:has(dialog[open]) .effect-frame, body:has(dialog[open]) .table-glow {
 }
 .player-kick { margin-top:4px; padding:3px 7px; border:1px solid #b94c453d; border-radius:7px; background:transparent; color:#a95a52; font-size:9px; font-weight:800; text-transform:uppercase; }
 .player-kick:hover { border-color:#e47c74; color:#eaa39c; background:#5a282522; }
+.auth-attention { animation: auth-attention-pulse .7s ease-in-out 3; border-color:#c8f47a !important; box-shadow:0 0 0 2px #c8f47a66, 0 0 34px #b9ed6b55, 0 24px 70px #0009 !important; }
+@keyframes auth-attention-pulse { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-3px); } }
+
+@media (max-width:700px) {
+  .game-heading-actions {
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    width:min(100%, 190px);
+  }
+  .game-heading-actions .game-code,
+  .game-heading-actions .secondary {
+    width:100%;
+    min-height:52px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-sizing:border-box;
+  }
+  .game-heading-actions .game-code { flex-direction:column; text-align:center; }
+}

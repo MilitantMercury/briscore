@@ -33,7 +33,7 @@ export function Scoreboard({ session, members, currentPlayerId, canKick = false,
               <PlayerAvatar name={player.name} avatar={member?.avatar} imagePath={member?.avatarImage} effect={member?.avatarEffect} rank={member?.globalRank} size="large" />
               <div className="player-card-name">
                 <b>{player.name}</b>
-                {isLeader ? <small>IN TESTA</small> : player.isBot ? <small className="bot-seat">BOT AL TAVOLO</small> : null}
+                {isLeader ? <small>IN TESTA</small> : player.isBot ? <small className="bot-seat">{member ? "OSPITE" : "BOT AL TAVOLO"}</small> : null}
               </div>
               <strong className={player.score > 0 ? "positive" : player.score < 0 ? "negative" : "neutral"}>{formatScore(player.score)}</strong>
               {canKick && player.id !== currentPlayerId && member && onKick && <button className="player-kick" type="button" onClick={() => onKick(player.id)}>Espelli</button>}

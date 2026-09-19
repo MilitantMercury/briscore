@@ -28,6 +28,7 @@ export default function Home() {
     userId,
     playerId,
     isAnonymous,
+    spectatorCount,
     authReady,
     dialog,
     host,
@@ -111,7 +112,7 @@ export default function Home() {
                         : " · Le tue proposte saranno approvate dall’host"}
                   </>
                 )}{" "}
-                · {room.members.filter((member) => member.playerId).length}/5 al tavolo
+                · {room.members.filter((member) => member.playerId).length}/5 al tavolo{spectatorCount > 0 ? ` - ${spectatorCount} spettator${spectatorCount === 1 ? "e" : "i"}` : ""}
               </p>
             </div>
             {room.roundCompleted && room.status === "active" && (
@@ -190,6 +191,7 @@ export default function Home() {
                       <History
                         session={room.session}
                         newestFirst={!oldest}
+                        readOnly={room.status !== "active"}
                         busy={busy || !online}
                         onEdit={(h) => {
                           setMessage("");

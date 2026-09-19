@@ -8,9 +8,11 @@ export type RoomReference = { id: string; inviteToken?: string; publicCode?: str
 export function useRoomSync(
   reference: RoomReference | null,
   userId: string | null,
+  playerId: string | null,
   acceptRoom: (room: Room) => void,
   setOnline: (online: boolean) => void,
   setError: (message: string) => void,
+  setSpectatorCount: (count: number) => void,
 ) {
   useEffect(() => {
     if (!reference || !userId) return;
@@ -82,6 +84,12 @@ export function useRoomSync(
     const subscribe = () => {
       channel = supabase
         .channel(`room:${reference.id}`)
+        .on("presence", { event: "sync" }, () => {
+          if (!channel) return;
+          const states = channel.presenceState<{ playerId?: string | null }>();
+          const count = Object.values(states).flat().filter((state) => !state.playerId).length;
+          setSpectatorCount(count);
+        })
         .on(
           "postgres_changes",
           {
@@ -106,6 +114,7 @@ export function useRoomSync(
             if (active) setOnline(false);
           }
         });
+      void channel.track({ userId, playerId });
     };
     const recover = () => {
       void refresh();
@@ -124,7 +133,7 @@ export function useRoomSync(
       clearTimeout(timer);
       window.removeEventListener("online", recover);
       document.removeEventListener("visibilitychange", recover);
-      if (channel) void supabase.removeChannel(channel);
+      if (channel) { setSpectatorCount(0); void supabase.removeChannel(channel); }
     };
-  }, [reference, userId, acceptRoom, setOnline, setError]);
+  }, [reference, userId, playerId, acceptRoom, setOnline, setError, setSpectatorCount]);
 }

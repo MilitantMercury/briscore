@@ -60,7 +60,7 @@ export function AppHeader() {
           {signedIn ? (
             <AccountMenu onSignOut={() => void signOut()} />
           ) : ready ? (
-            <Link href="/" className="header-sign-in">Accedi <span>→</span></Link>
+            <Link href="/#login" className="header-sign-in" onClick={(event) => { if (pathname === "/") { event.preventDefault(); window.dispatchEvent(new CustomEvent("briscore:focus-login")); } }}>Accedi <span>→</span></Link>
           ) : null}
         </div>
       </div>

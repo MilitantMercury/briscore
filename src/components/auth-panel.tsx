@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { supabase } from "@/lib/supabase-browser";
 const pendingRoomKey = "briscore-pending-room";
@@ -15,6 +15,19 @@ export function AuthPanel() {
   });
   const [busy, setBusy] = useState(false);
   const [providers, setProviders] = useState({ google: false, apple: false });
+  const [attention, setAttention] = useState(false);
+  const googleButton = useRef<HTMLButtonElement>(null);
+  function focusLogin() {
+    document.getElementById("login-panel")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setAttention(true);
+    window.setTimeout(() => setAttention(false), 2200);
+    window.setTimeout(() => googleButton.current?.focus(), 350);
+  }
+  useEffect(() => {
+    const listener = () => focusLogin();
+    window.addEventListener("briscore:focus-login", listener);
+    return () => window.removeEventListener("briscore:focus-login", listener);
+  }, []);
   useEffect(() => {
     let active = true;
     fetch("/api/auth/providers")
@@ -116,7 +129,7 @@ export function AuthPanel() {
         <p>Accedi una volta. Ritrovi il tuo profilo, le partite e la classifica su ogni dispositivo.</p>
         <div className="auth-suits" aria-label="Semi italiani"><span className="suit-denari" title="Denari">♦</span><span className="suit-coppe" title="Coppe">♥</span><span className="suit-spade" title="Spade">♠</span><span className="suit-bastoni" title="Bastoni">♣</span></div>
       </section>
-    <section className="panel setup-panel auth-panel deal-card">
+    <section id="login-panel" className={`panel setup-panel auth-panel deal-card${attention ? " auth-attention" : ""}`}>
       <span className="eyebrow">IL TUO ACCOUNT</span>
       <h2>Accedi a Briscore</h2>
       <p className="muted">
@@ -124,6 +137,7 @@ export function AuthPanel() {
       </p>
       <div className="auth-buttons">
         <button
+          ref={googleButton}
           className="secondary full auth-provider auth-google"
           disabled={busy || !providers.google}
           onClick={() => oauth("google")}

@@ -12,6 +12,7 @@ const messages: Record<string, string> = {
   INVALID_HAND:
     "La mano non è valida. Controlla chiamante, chiamato, esito e capotto.",
   INVALID_PLAYERS: "Inserisci cinque nomi diversi, da 1 a 30 caratteri.",
+  NAME_TAKEN: "Esiste gi� un altro giocatore con questo nome in questa partita.",
   INVALID_ACTION: "Operazione non valida.",
   ROOM_NOT_FOUND: "Partita non trovata.",
   HAND_NOT_FOUND: "Mano non disponibile o già inserita.",
@@ -31,7 +32,10 @@ export class ApiError extends Error {
       : error.code === "23505"
         ? 409
         : 400;
-    return new ApiError(error.message, status);
+    const code = error.code === "23505" && error.message.includes("players_unique_name")
+      ? "NAME_TAKEN"
+      : error.message;
+    return new ApiError(code, status);
   }
 }
 export function apiError(error: unknown) {
