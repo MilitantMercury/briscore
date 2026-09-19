@@ -91,10 +91,10 @@ export default function Home() {
                     })
                     .toUpperCase()}
                 </span>
-                <h1>Partita in corso<span className="lime">.</span></h1>
+                <h1>{room.status === "completed" ? "Partita conclusa" : room.status === "cancelled" ? "Partita annullata" : "Partita in corso"}<span className="lime">.</span></h1>
               </div>
               <div className="game-heading-actions">
-                {host && room.publicCode && <button className="game-code" onClick={async () => { await navigator.clipboard.writeText(room.publicCode!); setCodeCopied(true); setTimeout(() => setCodeCopied(false), 2200); }}><span>CODICE PARTITA</span><b>{codeCopied ? "Copiato!" : room.publicCode}</b></button>}
+                {host && room.status === "active" && room.publicCode && <button className="game-code" onClick={async () => { await navigator.clipboard.writeText(room.publicCode!); setCodeCopied(true); setTimeout(() => setCodeCopied(false), 2200); }}><span>CODICE PARTITA</span><b>{codeCopied ? "Copiato!" : room.publicCode}</b></button>}
                 <button className="secondary" onClick={share}>↗ Invita giocatori</button>
               </div>
             </div>
