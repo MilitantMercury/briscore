@@ -71,6 +71,9 @@ export async function enterRoom(
     await rpc(auth, "briscore_enter_room", { p_room: id, p_token: token }),
   );
 }
+export async function kickPlayer(auth: AuthContext, id: string, playerId: string) {
+  return hydrate(await rpc(auth, "briscore_kick_player", { p_room: id, p_player: playerId }));
+}
 export async function mutateRoom(
   auth: AuthContext,
   id: string,

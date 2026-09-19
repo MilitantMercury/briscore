@@ -214,6 +214,17 @@ export function useGame() {
       setOnline(true);
     });
   }
+  async function kickPlayer(playerId: string) {
+    if (!room || !host) return;
+    await run(async () => {
+      const next = await api<Room>(`/api/rooms/${room.id}/kick`, {
+        method: "POST",
+        body: JSON.stringify({ playerId }),
+      });
+      acceptRoom(next);
+      setMessage("Giocatore espulso. Il posto è di nuovo disponibile.");
+    });
+  }
   async function change(kind: Proposal["kind"], hand: Hand) {
     if (!room) return;
     await run(async () => {
@@ -357,6 +368,7 @@ export function useGame() {
     start,
     spectator,
     change,
+    kickPlayer,
     save,
     resolve,
     resetRoom,

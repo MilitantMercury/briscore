@@ -1889,3 +1889,5 @@ body:has(dialog[open]) .effect-frame, body:has(dialog[open]) .table-glow {
   .player-card-name b { font-size: 13px; }
   .player-card strong { font-size: 26px; }
 }
+.player-kick { margin-top:4px; padding:3px 7px; border:1px solid #b94c453d; border-radius:7px; background:transparent; color:#a95a52; font-size:9px; font-weight:800; text-transform:uppercase; }
+.player-kick:hover { border-color:#e47c74; color:#eaa39c; background:#5a282522; }

@@ -10,7 +10,7 @@ type Member = {
   globalRank?: number;
 };
 
-export function Scoreboard({ session, members }: { session: Session; members: Member[] }) {
+export function Scoreboard({ session, members, canKick = false, onKick }: { session: Session; members: Member[]; canKick?: boolean; onKick?: (playerId: string) => void }) {
   const rows = standings(session);
   const leaderScore = rows[0]?.score;
   return (
@@ -36,6 +36,7 @@ export function Scoreboard({ session, members }: { session: Session; members: Me
                 {isLeader ? <small>IN TESTA</small> : player.isBot ? <small className="bot-seat">BOT AL TAVOLO</small> : null}
               </div>
               <strong className={player.score > 0 ? "positive" : player.score < 0 ? "negative" : "neutral"}>{formatScore(player.score)}</strong>
+              {canKick && member && onKick && <button className="player-kick" type="button" onClick={() => onKick(player.id)}>Espelli</button>}
             </article>
           );
         })}
