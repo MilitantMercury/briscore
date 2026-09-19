@@ -359,6 +359,7 @@ export function useGame() {
     showStats,
     setShowStats,
     userId,
+    playerId,
     isAnonymous,
     authReady,
     dialog,
