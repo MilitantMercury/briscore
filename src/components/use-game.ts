@@ -222,7 +222,7 @@ export function useGame() {
         body: JSON.stringify({ playerId }),
       });
       acceptRoom(next);
-      setMessage("Giocatore espulso. Il posto è di nuovo disponibile.");
+      setMessage("Giocatore espulso. Il posto Ã¨ di nuovo disponibile.");
     });
   }
   async function change(kind: Proposal["kind"], hand: Hand) {

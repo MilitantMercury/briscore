@@ -131,7 +131,7 @@ export default function Home() {
               </a>
             )}
             <section className="table-stage">
-              <Scoreboard session={room.session} members={room.members} canKick={host} onKick={(playerId) => setConfirmation({ title: "Espellere questo giocatore?", message: "Il posto tornerà disponibile e lo storico della partita resterà invariato.", confirmLabel: "Espelli giocatore", tone: "danger", onConfirm: () => void kickPlayer(playerId) })} />
+              <Scoreboard session={room.session} members={room.members} canKick={host} onKick={(playerId) => setConfirmation({ title: "Espellere questo giocatore?", message: "Il posto tornerÃ¨ disponibile e lo storico della partita resterÃ¨ invariato.", confirmLabel: "Espelli giocatore", tone: "danger", onConfirm: () => void kickPlayer(playerId) })} />
               <section className="panel action-panel dealer-card dealer-strip">
                 <div className="dealer-copy">
                   <span className="eyebrow">IL MAZZIERE Ãˆ PRONTO</span>
