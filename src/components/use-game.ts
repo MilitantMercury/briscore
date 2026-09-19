@@ -24,6 +24,7 @@ export function useGame() {
   const [oldest, setOldest] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const [authReady, setAuthReady] = useState(false);
   const authenticatedUserId = useRef<string | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -40,8 +41,9 @@ export function useGame() {
   }
   useEffect(() => {
     let active = true;
-    const receiveSession = (session: { user: { id: string } } | null) => {
+    const receiveSession = (session: { user: { id: string; is_anonymous?: boolean } } | null) => {
       const nextUserId = session?.user.id ?? null;
+      setIsAnonymous(Boolean(session?.user.is_anonymous));
       if (authenticatedUserId.current !== nextUserId) {
         authenticatedUserId.current = nextUserId;
         setUserId(nextUserId);
@@ -346,6 +348,7 @@ export function useGame() {
     showStats,
     setShowStats,
     userId,
+    isAnonymous,
     authReady,
     dialog,
     host,

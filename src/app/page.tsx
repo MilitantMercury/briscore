@@ -26,6 +26,7 @@ export default function Home() {
     showStats,
     setShowStats,
     userId,
+    isAnonymous,
     authReady,
     dialog,
     host,
@@ -101,9 +102,11 @@ export default function Home() {
                 ) : (
                   <>
                     Giochi come <b>{author}</b>
-                    {host
-                      ? " · Sei l’host"
-                      : " · Le tue proposte saranno approvate dall’host"}
+                    {isAnonymous
+                      ? " · Ospite: accedi per registrare le mani"
+                      : host
+                        ? " · Sei l’host"
+                        : " · Le tue proposte saranno approvate dall’host"}
                   </>
                 )}{" "}
                 · {room.members.filter((member) => member.playerId).length}/5 al tavolo
@@ -137,13 +140,13 @@ export default function Home() {
                 <div className="dealer-actions">
                   <button
                     className="primary"
-                    disabled={busy || !online || spectator || room.status !== "active" || room.roundCompleted}
+                    disabled={busy || !online || spectator || isAnonymous || room.status !== "active" || room.roundCompleted}
                     onClick={() => {
                       setMessage("");
                       setEditor("new");
                     }}
                   >
-                    ＋ Aggiungi mano
+                    {isAnonymous ? "Accedi per aggiungere una mano" : "＋ Aggiungi mano"}
                   </button>
                   {!spectator && room.session.hands.length > 0 && (
                     <button
